@@ -595,8 +595,6 @@ table.est-t tr.tot td{font-weight:650;border-top:2px solid var(--line)}
  .navfil .btn:hover{background:rgba(255,255,255,.22);transform:scale(1.02)}
  .navfil .btn:active{transform:scale(.97)}
  .navfil .btn.pri{background:var(--orange);border-color:transparent}
- body.adm .est-fil{display:none}
- body.adm.navcol .est-fil{display:flex}
 }
 @media(prefers-reduced-motion:reduce){body.adm,body.adm nav>button,body.adm nav .circ,body.adm nav .circ svg{transition:none}}
 
@@ -1492,7 +1490,7 @@ function renderEst_(){
     <button class="btn sm${hist?' pri':''}" data-act="hist" aria-pressed="${hist}">Histórico mensual</button>
     <button class="btn sm" data-act="reset">Limpiar filtros</button>
   `;
-  S.estFilHtml='<h3>FILTROS</h3>'+filInner;
+  S.estFilHtml='';   // los filtros viven dentro de la pestaña Estadísticas, no en la barra lateral
   // enfocar de nuevo el campo que se estaba usando
   const ae=document.activeElement,foco=ae&&(box.contains(ae)||(ae.closest&&ae.closest('#navFil')))?ae.dataset.f:null;
   box.innerHTML=`
