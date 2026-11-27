@@ -236,6 +236,18 @@ table{font-size:13px}td{padding:10px 9px}
 #opsProg .grid{grid-template-columns:minmax(0,1fr)}
 /* viajes en curso: unidad en parada */
 #tbActivos th:last-child,#tbActivos td:last-child{position:sticky;right:0;background:var(--card);box-shadow:-8px 0 8px -8px rgba(8,43,92,.18)}
+.metrics article.bad{background:var(--badbg);border-color:color-mix(in srgb,var(--bad) 30%,var(--line))}.metrics article.bad strong,.metrics article.bad p{color:var(--bad)}
+.metrics article.warn::before{background:var(--warn)}.metrics article.ok::before{background:var(--ok)}.metrics article.bad::before{background:var(--bad)}
+.metrics .dv{color:var(--warn);background:var(--warnbg);padding:1px 6px;border-radius:5px}
+.aten{display:flex;align-items:center;gap:10px;margin:0 0 14px;padding:10px 14px;border:1px solid color-mix(in srgb,var(--warn) 28%,var(--line));background:color-mix(in srgb,var(--warnbg) 70%,var(--card));border-radius:10px;font-size:13px}
+.aten[hidden]{display:none}.aten .ic{display:inline-flex;width:18px;color:var(--warn)}.aten .ic svg{width:18px;height:18px}.aten p{margin:0;flex:1}.aten p span{color:var(--mute)}
+.opsfil{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin:0 0 10px}
+.chips{display:flex;flex-wrap:wrap;gap:4px}.chip{border:0;background:transparent;color:var(--mute);font:inherit;font-size:12.5px;font-weight:700;padding:6px 10px;border-radius:8px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.chip em{font-style:normal;font-size:10.5px;opacity:.75}.chip i{width:7px;height:7px;border-radius:50%;background:var(--ok)}.chip.r i{background:var(--bad)}.chip.a i{background:var(--warn)}
+.chip.on{background:var(--card);color:var(--ink,#0b2b6b);box-shadow:0 1px 3px rgba(8,43,95,.14)}
+#opsQ{width:220px;max-width:100%;font-size:16px}
+tbody tr.sv-r td:first-child{box-shadow:inset 4px 0 0 var(--bad)}tbody tr.sv-a td:first-child{box-shadow:inset 4px 0 0 var(--warn)}tbody tr.sv-o td:first-child{box-shadow:inset 4px 0 0 var(--ok)}
+.tmb{font-weight:800;padding:1px 7px;border-radius:6px}.tmb.r{background:var(--badbg);color:var(--bad)}.tmb.a{background:var(--warnbg);color:var(--warn)}.tmb.o{background:var(--okbg);color:var(--ok)}
 tbody tr.enpar td:last-child{background:#fff1f0}
 #tbActivos .acts{display:flex;flex-direction:column;gap:6px;align-items:stretch}
 #tbActivos .acts .btn{white-space:nowrap}
@@ -755,6 +767,7 @@ body.adm .card input,body.adm .card select,body.adm .est-fil input,body.adm .est
   <section id="v-ops" hidden>
     <div class="hero"><div><p class="ey" id="heroEy"></p><div class="hh" id="heroH"></div><p class="hp">Monitorea y coordina la operación de transporte en tiempo real.</p><div class="hstats"><div class="stats" id="stats"></div><span id="upd2"></span></div></div></div>
     <div class="metrics" id="opsMetrics"></div>
+    <div id="opsAten" class="aten" hidden></div>
     <div class="row" id="opsBar" style="margin:0 0 14px;gap:8px;flex-wrap:wrap">
       <button class="btn ham" type="button" id="opsM2" aria-expanded="false" aria-controls="opsProg"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg><span id="opsM2T">Programación del turno</span></button>
       <span class="mute" id="opsInfo" style="font-size:13px"></span>
@@ -766,6 +779,7 @@ body.adm .card input,body.adm .card select,body.adm .est-fil input,body.adm .est
           <h2 style="margin:0"><span id="tActTit">Viajes en curso</span></h2>
           <div class="row" style="gap:8px;flex-wrap:wrap"><input type="date" id="fFecha" style="width:auto" aria-label="Fecha (desde hoy en adelante)" title="Ver viajes de otra fecha"><button type="button" class="btn sm" id="fFechaX" hidden>Vigentes</button><select id="fTurno" style="width:auto" aria-label="Turno"></select><select id="fProy" style="width:auto"></select></div>
         </div>
+        <div class="opsfil"><div class="chips" id="opsChips"></div><input type="search" id="opsQ" placeholder="Buscar placa o chofer…" aria-label="Buscar placa o chofer" autocomplete="off"></div>
         <div class="scroll" id="tbActivos"></div>
       </div>
     </div>
@@ -2080,13 +2094,14 @@ function renderOpsHero(){
   const fin=S.A.viajes.filter(v=>v.estado==='finalizado'&&v.t1&&v.turno===cur.turno&&diaOp(v.t1,cur.turno)===cur.fecha);
   const prom=(a,b)=>{const L=fin.filter(v=>v[a]&&v[b]&&v[b]>v[a]).map(v=>v[b]-v[a]);return{n:L.length,ms:L.length?L.reduce((x,y)=>x+y,0)/L.length:0}};
   const avgC=prom('t2','t3'),avgD=prom('t5','t6');
+  const cL=fin.filter(v=>typeof v.ciclo==='number'&&v.ciclo>0).map(v=>v.ciclo),cic={n:cL.length,ms:cL.length?cL.reduce((a,b)=>a+b,0)/cL.length:0};
   let top=null;act.forEach(v=>{const p=v.paso||0,since=(p?v['t'+p]:0)||v.creado,ms=now-since;if(!top||ms>top.ms)top={ms,v,p}});
   const dn=(n,c)=>`<span class="donut" style="--p:${n};--c:${c}"><span>${n}%</span></span>`;
   $('#opsMetrics').innerHTML=
-   `<article><span class="mi blue">${ico('truck')}</span><div><p>Viajes en curso</p><strong>${act.length}</strong><small>Turno ${esc(cur.turno.toLowerCase())}</small></div></article>`+
-   `<article><span class="mi teal">${ico('check')}</span><div><p>Viajes finalizados</p><strong>${fin.length}</strong><small>Turno ${esc(cur.turno.toLowerCase())}${fin.length&&pl.length?' · '+(fin.length/pl.length).toFixed(1)+' por unidad':''}</small></div></article>`+
+   `<article><span class="mi blue">${ico('truck')}</span><div><p>Producción del turno</p><strong>${fin.length}</strong><small>finalizados · ${act.length} en curso${fin.length&&pl.length?' · '+(fin.length/pl.length).toFixed(1)+' por unidad':''}</small></div></article>`+
+   `<article class="${cic.n?(cic.ms>META_CICLO?'warn':'ok'):''}"><span class="mi teal">${ico('timer')}</span><div><p>Ciclo promedio</p><strong>${cic.n?fdur(cic.ms):'—'}</strong><small>Meta ${META_CICLO/60000} min${cic.n&&cic.ms>META_CICLO?' · <b class="dv">+'+fdur(cic.ms-META_CICLO)+' de desviación</b>':''}</small></div></article>`+
    `<article><span class="mi or">${ico('timer')}</span><div><p>Carga y descarga · promedio</p><div class="ttw"><span><em>Carga</em><strong>${avgC.n?fdur(avgC.ms):'—'}</strong></span><span><em>Descarga</em><strong>${avgD.n?fdur(avgD.ms):'—'}</strong></span></div><small>${Math.max(avgC.n,avgD.n)?'de '+Math.max(avgC.n,avgD.n)+' viaje'+(Math.max(avgC.n,avgD.n)===1?'':'s')+' del turno':'Sin viajes finalizados'}</small></div></article>`+
-   `<article><span class="mi amber">${ico('clock')}</span><div><p>Mayor tiempo en estado</p><strong>${top?fdur(top.ms):'—'}</strong><small>${top?esc(top.v.placa)+' · '+esc(ESTADOS[top.p]):'Sin viajes en curso'}</small></div></article>`;
+   `<article class="${top?(top.ms/60000>=OPS_ROJ?'bad':top.ms/60000>=OPS_AMA?'warn':''):''}"><span class="mi amber">${ico('clock')}</span><div><p>Mayor tiempo en estado</p><strong>${top?fdur(top.ms):'—'}</strong><small>${top?esc(top.v.placa)+' · '+esc(ESTADOS[top.p]):'Sin viajes en curso'}</small></div></article>`;
 }
 function aplicaAsigPlegada(){const a=$('#opsAhora');if(a)a.classList.remove('cola')}
 function renderOpsBar(){
@@ -2108,17 +2123,30 @@ function fechasOpts(){
   if(el.value!==(S.fFecha||''))el.value=S.fFecha||'';
   const x=$('#fFechaX');if(x)x.hidden=!S.fFecha;
 }
+/* Torre de control: severidad por tiempo en estado (r=crítica, a=atención, o=en tiempo) */
+const OPS_AMA=30,OPS_ROJ=60;/* minutos en el mismo estado */
+function opsSevMap(L,pab){const now=Date.now(),m={};L.forEach(v=>{if(pab&&pab[v.placa]){m[v.id]='r';return}const p=v.paso||0,since=(p?v['t'+p]:0)||v.creado,min=(now-since)/60000;m[v.id]=min>=OPS_ROJ?'r':min>=OPS_AMA?'a':'o'});return m}
+function opsChips(L,sv,SV){
+  const n={t:L.length,r:0,a:0,o:0};L.forEach(v=>n[sv[v.id]]++);
+  const el=$('#opsChips');if(el)el.innerHTML=[['t','Todas'],['r','Críticas'],['a','En atención'],['o','En tiempo']].map(([k,t])=>`<button type="button" class="chip ${k} ${SV===k?'on':''}" data-opssev="${k}" aria-pressed="${SV===k}">${k==='t'?'':'<i></i>'}${t}<em>${n[k]}</em></button>`).join('');
+  const at=n.r+n.a,bx=$('#opsAten');
+  if(bx){bx.hidden=!at;bx.innerHTML=at?`<span class="ic">${ico('alert')}</span><p><b>${at} unidad${at===1?'':'es'} requiere${at===1?'':'n'} atención</b><span> · ${n.r?n.r+' crítica'+(n.r===1?'':'s')+(n.a?' y ':''):''}${n.a?n.a+' en atención':''}. Tiempo en estado por encima de lo esperado.</span></p><button type="button" class="btn sm" data-opssev="${SV==='r'&&n.r?'t':(n.r?'r':'a')}">${SV!=='t'?'Ver todas':'Revisar unidades'}</button>`:''}
+}
 function renderOps(){
   if(!S.fTurno)S.fTurno=turnoNow().turno;
   const fT=$('#fTurno');if(fT&&fT.value!==S.fTurno)fT.value=S.fTurno;
   const tsl=S.fTurno;
   const pab={};(S.A.paradas||[]).filter(x=>x.estado==='abierta'&&x.inicio>Date.now()-72e6).forEach(x=>{if(x.placa)pab[x.placa]=x});
   const FF=S.fFecha||'';fechasOpts();
-  const act=activos().filter(v=>(!S.fProy||v.proyecto===S.fProy)&&(!tsl||v.turno===tsl)&&(!FF||diaOp(v.creado,v.turno)===FF)).sort((a,b)=>(pab[b.placa]?1:0)-(pab[a.placa]?1:0)),box=$('#tbActivos');
+  const act0=activos().filter(v=>(!S.fProy||v.proyecto===S.fProy)&&(!tsl||v.turno===tsl)&&(!FF||diaOp(v.creado,v.turno)===FF)).sort((a,b)=>(pab[b.placa]?1:0)-(pab[a.placa]?1:0)),box=$('#tbActivos');
+  const sv0=opsSevMap(act0,pab),SV=S.opsSev||'t',Q=String(S.opsQ||'').trim().toLowerCase(),qOk=x=>!Q||String(x.placa||'').toLowerCase().includes(Q)||String(x.chofer||'').toLowerCase().includes(Q);
+  const act=act0.filter(v=>(SV==='t'||sv0[v.id]===SV)&&qOk(v));
+  opsChips(act0,sv0,SV);
   $('#tActTit').textContent=tsl?'Viajes en curso · turno '+tsl.toLowerCase():'Viajes en curso';
   const cur=turnoNow(),todos=activos();
-  const prg=(S.A.prog||[]).filter(x=>x.estado==='programado'&&(FF?x.fecha===FF:x.fecha<=cur.fecha)&&(!S.fProy||x.proyecto===S.fProy)&&(!tsl||x.turno===tsl)).sort((a,b)=>byText('turno')(a,b)||byText('placa')(a,b));
+  const prg=(S.A.prog||[]).filter(x=>x.estado==='programado'&&(FF?x.fecha===FF:x.fecha<=cur.fecha)&&(!S.fProy||x.proyecto===S.fProy)&&(!tsl||x.turno===tsl)).filter(x=>SV==='t'&&qOk(x)).sort((a,b)=>byText('turno')(a,b)||byText('placa')(a,b));
   if(!act.length&&!prg.length){
+    if(act0.length&&(Q||SV!=='t')){box.innerHTML='<div class="empty">No se encontraron viajes con ese filtro. <button type="button" class="btn sm" id="opsLimp">Limpiar</button></div>';return}
     const otros=(S.A.prog||[]).filter(x=>x.estado==='programado'&&(FF?x.fecha===FF:true)&&x.turno!==tsl).length,fl=FF?' del '+FF.split('-').reverse().join('/'):'';
     box.innerHTML=`<div class="empty">${tsl?'No hay viajes ni programación'+fl+' en el turno '+esc(tsl.toLowerCase())+'.':'No hay viajes en curso.'}${otros?' Hay '+otros+' programado'+(otros===1?'':'s')+' en el otro turno: cambia el filtro de turno.':''} ${FF?'':'Asigna una unidad y un chofer para empezar.'}</div>`;return}
   const filaPrg=x=>{const up=todos.find(v=>v.placa_id===x.placa_id&&(!v.turno||v.turno===x.turno)),uc=todos.find(v=>v.chofer_id===x.chofer_id);
@@ -2126,9 +2154,9 @@ function renderOps(){
     return`<tr data-rid="${esc(x.id)}" class="prg ${S.rowOpen&&S.rowOpen[x.id]?'open':''}"><td><b>${esc(x.chofer)}</b>${av}</td><td><b>${esc(x.placa)}</b><div style="margin-top:3px">${pj(x.proyecto)}</div><div class="mute" style="font-size:12px">${esc(x.turno)}</div></td><td><div class="mute" style="font-size:12px">${esc(x.operacion)||'—'}</div><div class="mute" style="font-size:12px">${x.auto?'Viajes automáticos':''}</div></td><td><span class="b prgb">PROGRAMADO</span><div class="mute" style="font-size:12px;margin-top:4px">${esc(x.turno.toLowerCase())} del ${esc(x.fecha.split('-').reverse().join('/'))} · aún no le llega al chofer</div></td><td><div class="acts"><button class="btn pri sm playb" data-passign="${esc(x.id)}" title="Enviar al chofer">▶ Enviar</button><button class="btn sm danger" data-pdel="${esc(x.id)}">Quitar</button></div></td></tr>`};
   box.innerHTML=`<table><thead><tr><th>Chofer</th><th>Placa</th><th>Ruta y contenedor</th><th>Estado</th><th></th></tr></thead><tbody>`+prg.map(filaPrg).join('')+
   act.map(v=>{const p=v.paso||0,since=(p?v['t'+p]:0)||v.creado,canAuto=B.autoProyectos.includes(v.proyecto),pa=pab[v.placa];
-    return`<tr data-rid="${esc(v.id)}" class="${pa?'enpar ':''}${S.rowOpen&&S.rowOpen[v.id]?'open':''}"><td><b>${esc(v.chofer)}</b></td><td><b>${esc(v.placa)}</b><div style="margin-top:3px">${pj(v.proyecto)}</div><div class="mute" style="font-size:12px">${esc(v.turno)||'—'}</div></td>
+    return`<tr data-rid="${esc(v.id)}" class="sv-${sv0[v.id]} ${pa?'enpar ':''}${S.rowOpen&&S.rowOpen[v.id]?'open':''}"><td><b>${esc(v.chofer)}</b></td><td><b>${esc(v.placa)}</b><div style="margin-top:3px">${pj(v.proyecto)}</div><div class="mute" style="font-size:12px">${esc(v.turno)||'—'}</div></td>
     <td>${rutaTxt(v)}<div class="mute" style="font-size:12px">${esc(v.operacion)}${v.viaje_no>1?' · viaje #'+v.viaje_no:''}</div><div class="mono" style="font-size:12px;margin-top:2px">${v.contenedor?esc(v.contenedor)+' · '+esc(v.medida):'<span class="mute">Sin contenedor</span>'}</div>${v.observaciones?`<div class="mute" style="font-size:12px">${esc(v.observaciones)}</div>`:''}</td>
-    <td>${pa?`<span class="b off pbad">EN PARADA</span><div class="pmot">${esc(pa.motivo)}</div><div class="mono" style="font-size:12px">desde ${hora(pa.inicio)} · <span class="pcrono" data-since="${pa.inicio}">${fdur(Date.now()-pa.inicio)}</span></div>`:`<span class="b ${['bl','bl','bl','free','busy','busy'][p]||'busy'}">${ESTADOS[p]}</span><div class="mono" style="font-size:12px;margin-top:3px">desde ${hora(since)} · <span data-since="${since}">${fdur(Date.now()-since)}</span></div>`}<div class="seg" style="margin-top:6px">${[1,2,3,4,5,6].map(i=>`<i class="${i<=p?'f':''}"></i>`).join('')}</div></td>
+    <td>${pa?`<span class="b off pbad">EN PARADA</span><div class="pmot">${esc(pa.motivo)}</div><div class="mono" style="font-size:12px">desde ${hora(pa.inicio)} · <span class="pcrono" data-since="${pa.inicio}">${fdur(Date.now()-pa.inicio)}</span></div>`:`<span class="b ${['bl','bl','bl','free','busy','busy'][p]||'busy'}">${ESTADOS[p]}</span><div class="mono" style="font-size:12px;margin-top:3px">desde ${hora(since)} · <span class="tmb ${sv0[v.id]}" data-since="${since}">${fdur(Date.now()-since)}</span></div>`}<div class="seg" style="margin-top:6px">${[1,2,3,4,5,6].map(i=>`<i class="${i<=p?'f':''}"></i>`).join('')}</div></td>
     <td><div class="acts">${canAuto?`<button class="btn sm" data-auto="${esc(v.id)}" title="Viajes seguidos">Auto: ${v.auto?'Sí ✔':'No'}</button>`:''}${p===0?`<button class="btn sm" data-cplaca="${esc(v.id)}">Cambiar placa</button>`:''}<button class="btn sm danger" data-liberar="${esc(v.id)}">Liberar</button></div></td></tr>`}).join('')+`</tbody></table>`;
 }
 /* Cambio de placa (despacho): la parada del chofer sigue corriendo */
@@ -2925,6 +2953,8 @@ document.addEventListener('click',e=>{
   if(t.id==='btnRefresh'||t.id==='btnRefresh2'){if(S.mode==='visor')loadVisor();else{S.forzar=true;loadAdmin()}}
   else if(t.id==='btnTHoy'){S.tt=null;renderTurnoTab()}
   else if(t.id==='btnCierre')cierreDlg();
+  else if(t.closest&&t.closest('[data-opssev]')){S.opsSev=t.closest('[data-opssev]').dataset.opssev;renderOps()}
+  else if(t.id==='opsLimp'){S.opsSev='t';S.opsQ='';const q=$('#opsQ');if(q)q.value='';renderOps()}
   else if(t.id==='btnTPrev'||t.id==='btnTNext'){if(!S.tt)S.tt=Object.assign(turnoNow(),{proy:''});S.tt.fecha=shiftDay(S.tt.fecha,t.id==='btnTPrev'?-1:1);renderTurnoTab()}
   else if(t.id==='btnRole'){
     if(S.mode==='admin'||S.mode==='visor')logout();else{show('login');setTimeout(()=>$('#pin').focus(),50)}
@@ -2995,6 +3025,7 @@ $('#fFecha').addEventListener('change',e=>{let v=e.target.value||'';const m=e.ta
 $('#fFechaX').addEventListener('click',()=>{S.fFecha='';renderOps()});
 $('#hProy').addEventListener('change',e=>{S.hProy=e.target.value;renderHist()});
 $('#qHist').addEventListener('input',()=>renderHist());
+$('#opsQ').addEventListener('input',e=>{S.opsQ=e.target.value;if(S.A)renderOps()});
 $('#tbHist').addEventListener('click',e=>{const b=e.target.closest('[data-hed]');if(b)editarViaje(b.dataset.hed)});
 for(const n of['placas','choferes']){
   $('#add-'+n).addEventListener('submit',e=>catalogAdd(n,e));
