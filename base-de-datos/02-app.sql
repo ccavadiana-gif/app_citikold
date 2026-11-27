@@ -1298,11 +1298,12 @@ create or replace function f_puente_pendientes(lim int) returns jsonb language s
     from (select * from viajes where puente in ('PEND','OK1') and estado = 'finalizado' and t6 is not null
            and proyecto = any (cfg_list('puenteProyectos')) order by t6 limit coalesce(lim, 50)) v $$;
 
-create or replace function f_puente_marcar(p_id text, estado text, err text) returns jsonb language plpgsql as $$
+create or replace function f_puente_marcar(p_id text, p_estado text, p_err text) returns jsonb language plpgsql as $$
 begin
-  if estado not in ('OK','OK1','ERR') then perform e('Estado no válido.'); end if;
-  update viajes set puente = estado where id = p_id;
-  if estado = 'ERR' then insert into puente_pendientes (id_viaje, error) values (p_id, left(coalesce(err, ''), 300)); end if;
+  if p_estado not in ('OK','OK1','ERR') then perform e('Estado no válido.'); end if;
+  update viajes set puente = p_estado where id = p_id;
+  if not found then perform e('No se encontró el viaje.'); end if;
+  if p_estado = 'ERR' then insert into puente_pendientes (id_viaje, error) values (p_id, left(coalesce(p_err, ''), 300)); end if;
   return 'true';
 end $$;
 
