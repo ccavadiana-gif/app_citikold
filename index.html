@@ -328,6 +328,21 @@ tr.prg td{background:#eef4ff}.b.prgb{background:#dfe9ff;color:#2a4fa8}.playb{whi
 .pst .pa{font-size:13px;color:var(--mute);margin-top:4px}.pst .pa b{color:var(--ink)}
 .pst .bar{height:6px;border-radius:99px;background:var(--seg);margin-top:10px;overflow:hidden}
 .pst+.bigbtn{margin:10px 0 4px}
+.sem{padding:14px 16px}
+.sem .st{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.sem .big{font-size:26px;font-weight:800;line-height:1}
+.sem .sub{font-size:12.5px;color:var(--mute)}
+.sem .cols{display:flex;align-items:flex-end;gap:6px;height:96px;margin-top:12px}
+.sem .col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:3px}
+.sem .col b{font-size:12px;font-weight:700;min-height:14px}
+.sem .col i{display:block;width:100%;max-width:34px;border-radius:6px 6px 2px 2px;background:var(--acc);opacity:.55;min-height:3px}
+.sem .col.hoy i{background:var(--orange);opacity:1}
+.sem .col.vac i{background:var(--seg);opacity:1}
+.sem .dl{display:flex;gap:6px;margin-top:4px}
+.sem .dl span{flex:1;text-align:center;font-size:11.5px;color:var(--mute)}
+.sem .dl span.hoy{color:var(--ink);font-weight:800}
+.sem .cmp{margin-top:10px;font-size:13px}
+.sem .cmp.up{color:var(--ok)}.sem .cmp.dn{color:var(--warn)}
 .pst .bar i{display:block;height:100%;background:var(--ok);border-radius:99px;transition:width .5s}
 
 /* Despacho en celular: lista compacta (la web no cambia) */
@@ -2568,7 +2583,7 @@ function renderDriverMain_(force){
   if(!ch){box.innerHTML='';lastDrvKey='';return}
   if(!S.ds){box.innerHTML='<div class="card empty">Cargando…</div>';return}
   const t=S.ds.trip,e=t?curEdit(t):null;
-  const key=JSON.stringify([t,S.ds.last,e&&e.med,e&&e.obs,S.ds.relevo,S.rf,S.ds.prog,S.ds.jornada,S.ds.error,Math.floor(Date.now()/60000)]);
+  const key=JSON.stringify([t,S.ds.last,e&&e.med,e&&e.obs,S.ds.relevo,S.rf,S.ds.prog,S.ds.jornada,S.ds.semana,S.ds.error,Math.floor(Date.now()/60000)]);
   if(!force&&key===lastDrvKey)return;
   const a=document.activeElement;
   if(!force&&a&&a.closest&&a.closest('#drvMain')&&(a.tagName==='INPUT'||a.tagName==='SELECT'))return;
@@ -2581,7 +2596,7 @@ function renderDriverMain_(force){
     const last=S.ds.last;
     box.innerHTML=topPlate(null)+jornadaHtml(null)+`<div class="card empty"><b style="color:var(--ink);font-size:17px">Sin asignación</b><br>Espera a que despacho te asigne una unidad.<br><br><button class="btn" data-refresh>Actualizar</button></div>`+
       ((S.ds.prog||[]).length?`<div class="card"><h2>Programado para ti</h2>${S.ds.prog.map(x=>`<div style="margin:4px 0"><b>${esc(x.placa)}</b> · turno ${esc(x.turno.toLowerCase())} del ${esc(x.fecha.split('-').reverse().join('/'))} · ${pj(x.proyecto)}</div>`).join('')}<div class="mute" style="font-size:12.5px;margin-top:6px">Cuando empiece tu turno, despacho te asigna el viaje.</div></div>`:'')+
-      (last?`<div class="card"><h2>Último viaje finalizado</h2><div>${esc(last.origen)} → ${esc(last.destino)}</div><div class="mute mono" style="margin-top:6px">Contenedor: ${esc(last.contenedor)||'—'} ${esc(last.medida)} · Duración: ${fdur(dur(last,METRICAS[6]))} · Fin: ${hora(last.t6)}</div>${((B.siguienteProyectos||[]).includes(last.proyecto)||last.auto)&&last.t6&&Date.now()-last.t6<14*3600*1000?`<button class="bigbtn" style="margin-top:14px" data-next="${esc(last.id)}">+ Agregar otro viaje<br><span style="font-size:13px;font-weight:500">mismo camión y operación</span></button>`:''}</div>`:'')+jornadaFin(null);
+      (last?`<div class="card"><h2>Último viaje finalizado</h2><div>${esc(last.origen)} → ${esc(last.destino)}</div><div class="mute mono" style="margin-top:6px">Contenedor: ${esc(last.contenedor)||'—'} ${esc(last.medida)} · Duración: ${fdur(dur(last,METRICAS[6]))} · Fin: ${hora(last.t6)}</div>${((B.siguienteProyectos||[]).includes(last.proyecto)||last.auto)&&last.t6&&Date.now()-last.t6<14*3600*1000?`<button class="bigbtn" style="margin-top:14px" data-next="${esc(last.id)}">+ Agregar otro viaje<br><span style="font-size:13px;font-weight:500">mismo camión y operación</span></button>`:''}</div>`:'')+semanaHtml()+jornadaFin(null);
     return;
   }
   const p=t.paso||0,h=hintFor(normC(e.cont));
@@ -2602,9 +2617,19 @@ function renderDriverMain_(force){
     </div>
 
     <div class="obs"><label style="margin-top:0">Observación del viaje (opcional, solo una)</label>${B.observaciones.map(o=>`<label class="ob"><input type="checkbox" value="${esc(o)}" ${e.obs.includes(o)?'checked':''}><span class="oi">${ico(obsIco(o))}</span><span>${esc(o)}</span></label>`).join('')}</div>
-</div>`+jornadaFin(t);
+</div>`+semanaHtml()+jornadaFin(t);
 }
 
+/* Progreso semanal del chofer: viajes finalizados por día (lunes a domingo). Si el servidor aún no manda 'semana', no se muestra nada. */
+function semanaHtml(){
+  const w=S.ds&&S.ds.semana;if(!w||!Array.isArray(w.dias)||w.dias.length!==7)return'';
+  const nom=['L','M','X','J','V','S','D'],hoy=w.lunes?Math.round((Date.parse(w.hoy+'T12:00:00Z')-Date.parse(w.lunes+'T12:00:00Z'))/864e5):-1;
+  const tot=w.dias.reduce((a,b)=>a+b,0),max=Math.max(1,...w.dias),prev=+w.previa||0;
+  const cols=w.dias.map((n,i)=>`<div class="col${i===hoy?' hoy':''}${i>hoy&&hoy>=0?' vac':''}"><b>${i>hoy&&hoy>=0?'':n}</b><i style="height:${i>hoy&&hoy>=0?3:Math.max(3,Math.round(n/max*70))}px"></i></div>`).join('');
+  const lbl=nom.map((d,i)=>`<span class="${i===hoy?'hoy':''}">${d}</span>`).join('');
+  const dif=tot-prev,cmp=prev||tot?(dif>0?`<div class="cmp up">▲ ${dif} más que la semana pasada (${prev})</div>`:dif<0?`<div class="cmp dn">▼ ${-dif} menos que la semana pasada (${prev})</div>`:`<div class="cmp mute">Igual que la semana pasada (${prev})</div>`):'';
+  return `<div class="card sem"><h2>Mi semana</h2><div class="st"><span class="big">${tot}</span><span class="sub">viaje${tot===1?'':'s'} finalizado${tot===1?'':'s'} esta semana</span></div><div class="cols">${cols}</div><div class="dl">${lbl}</div>${cmp}</div>`;
+}
 function pasoCard(t,p){
   const lbl=i=>BTN[i].replace(/^\d+ · /,''),u=p>0?t['t'+p]:0;
   return `<div class="pst"><div class="pt"><span class="pn">${p?'Paso '+p+' de 6':'Viaje sin iniciar'}</span>${u?`<span class="pa">Hace <b>${esc(fHM(Date.now()-u))}</b></span>`:''}</div><div class="pl">${p?esc(lbl(p)):'Marca el primer paso para iniciar'}</div>${u?`<div class="pa">Último paso marcado a las <b>${esc(hora(u).slice(0,5))}</b></div>`:''}<div class="bar"><i style="width:${Math.round(p/6*100)}%"></i></div></div>`;
