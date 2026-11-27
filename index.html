@@ -506,24 +506,57 @@ nav .mas-sheet .salir{display:none}
 .est-fil{display:flex;flex-wrap:wrap;gap:10px 12px;align-items:flex-end}
 .est-fil label{display:grid;gap:4px;font-size:12px;color:var(--mute)}
 .est-fil input,.est-fil select{min-width:9rem}
-:is(#estBox,#facBox) .sc-sec{margin:18px 0 8px;font-size:12px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--mute)}
-:is(#estBox,#facBox) .sc-grid{display:grid;gap:12px;margin-bottom:16px;grid-template-columns:repeat(auto-fit,minmax(215px,1fr))}
-:is(#estBox,#facBox) .sc-grid.s2{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
-:is(#estBox,#facBox) .sc{position:relative;overflow:hidden;min-width:0;display:flex;flex-direction:column;gap:9px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 14px 14px;box-shadow:0 1px 2px rgba(8,43,92,.06),0 10px 26px -14px rgba(8,43,92,.22);--sc:var(--esto);--scbg:var(--orangesoft)}
-:is(#estBox,#facBox) .sc.ok{--sc:var(--ok);--scbg:var(--okbg)}:is(#estBox,#facBox) .sc.warn{--sc:var(--warn);--scbg:var(--warnbg)}:is(#estBox,#facBox) .sc.bad{--sc:var(--bad);--scbg:var(--badbg)}
-:is(#estBox,#facBox) .sc-bar{position:absolute;left:0;right:0;top:0;height:4px;background:var(--sc)}
-:is(#estBox,#facBox) .sc-h{display:flex;align-items:center;gap:9px}
-:is(#estBox,#facBox) .sc-i{flex:none;display:grid;place-items:center;width:34px;height:34px;border-radius:11px;background:var(--scbg);color:var(--sc)}
-:is(#estBox,#facBox) .sc-i svg{width:18px;height:18px}
-:is(#estBox,#facBox) .sc h3{margin:0;font-size:13px;font-weight:700;line-height:1.2;color:var(--mute);min-width:0}
-:is(#estBox,#facBox) .sc-v{font-size:32px;font-weight:800;line-height:1;letter-spacing:-.02em;color:var(--estp);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
-:is(#estBox,#facBox) .sc-p{height:8px;border-radius:99px;background:var(--seg);overflow:hidden}
-:is(#estBox,#facBox) .sc-p i{display:block;height:100%;border-radius:99px;background:var(--sc);transition:width .7s}
-:is(#estBox,#facBox) .sc-t{display:block;width:fit-content;max-width:100%;font-size:12px;font-weight:800;padding:2px 10px;border-radius:99px;background:var(--scbg);color:var(--sc)}
-:is(#estBox,#facBox) .sc-n{font-size:12px;line-height:1.35;color:var(--mute);margin-top:auto}
-@media(max-width:700px){:is(#estBox,#facBox) .sc-grid,:is(#estBox,#facBox) .sc-grid.s2{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}:is(#estBox,#facBox) .sc-v{font-size:26px}:is(#estBox,#facBox) .sc{padding:14px 12px 12px}:is(#estBox,#facBox) .sc-n{font-size:11.5px}}
+:is(#estBox,#facBox,#v-turno,#reporte-cierre-export) .sc-sec{margin:18px 0 8px;font-size:12px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--mute)}
+:is(#estBox,#facBox,#v-turno,#reporte-cierre-export) .sc-grid{display:grid;gap:12px;margin-bottom:16px;grid-template-columns:repeat(auto-fit,minmax(215px,1fr))}
+:is(#estBox,#facBox,#v-turno,#reporte-cierre-export) .sc-grid.s2{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+:is(#estBox,#facBox,#v-turno,#reporte-cierre-export) .sc{position:relative;overflow:hidden;min-width:0;display:flex;flex-direction:column;gap:9px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 14px 14px;box-shadow:0 1px 2px rgba(8,43,92,.06),0 10px 26px -14px rgba(8,43,92,.22);--sc:var(--esto);--scbg:var(--orangesoft)}
+:is(#estBox,#facBox,#v-turno,#reporte-cierre-export) .sc.ok{--sc:var(--ok);--scbg:var(--okbg)}:is(#estBox,#facBox,#v-turno,#reporte-cierre-export) .sc.warn{--sc:var(--warn);--scbg:var(--warnbg)}:is(#estBox,#facBox,#v-turno,#reporte-cierre-export) .sc.bad{--sc:var(--bad);--scbg:var(--badbg)}
+:is(#estBox,#facBox,#v-turno,#reporte-cierre-export) .sc-bar{position:absolute;left:0;right:0;top:0;height:4px;background:var(--sc)}
+:is(#estBox,#facBox,#v-turno,#reporte-cierre-export) .sc-h{display:flex;align-items:center;gap:9px}
+:is(#estBox,#facBox,#v-turno,#reporte-cierre-export) .sc-i{flex:none;display:grid;place-items:center;width:34px;height:34px;border-radius:11px;background:var(--scbg);color:var(--sc)}
+:is(#estBox,#facBox,#v-turno,#reporte-cierre-export) .sc-i svg{width:18px;height:18px}
+:is(#estBox,#facBox,#v-turno,#reporte-cierre-export) .sc h3{margin:0;font-size:13px;font-weight:700;line-height:1.2;color:var(--mute);min-width:0}
+:is(#estBox,#facBox,#v-turno,#reporte-cierre-export) .sc-v{font-size:32px;font-weight:800;line-height:1;letter-spacing:-.02em;color:var(--estp);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+:is(#estBox,#facBox,#v-turno,#reporte-cierre-export) .sc-p{height:8px;border-radius:99px;background:var(--seg);overflow:hidden}
+:is(#estBox,#facBox,#v-turno,#reporte-cierre-export) .sc-p i{display:block;height:100%;border-radius:99px;background:var(--sc);transition:width .7s}
+:is(#estBox,#facBox,#v-turno,#reporte-cierre-export) .sc-t{display:block;width:fit-content;max-width:100%;font-size:12px;font-weight:800;padding:2px 10px;border-radius:99px;background:var(--scbg);color:var(--sc)}
+:is(#estBox,#facBox,#v-turno,#reporte-cierre-export) .sc-n{font-size:12px;line-height:1.35;color:var(--mute);margin-top:auto}
+@media(max-width:700px){:is(#estBox,#facBox,#v-turno,#reporte-cierre-export) .sc-grid,:is(#estBox,#facBox,#v-turno,#reporte-cierre-export) .sc-grid.s2{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}:is(#estBox,#facBox,#v-turno,#reporte-cierre-export) .sc-v{font-size:26px}:is(#estBox,#facBox,#v-turno,#reporte-cierre-export) .sc{padding:14px 12px 12px}:is(#estBox,#facBox,#v-turno,#reporte-cierre-export) .sc-n{font-size:11.5px}}
 #facBox .sc-v{font-size:clamp(20px,2.1vw,28px)}
 @media(max-width:700px){#facBox .sc-v{font-size:21px}}
+#v-turno .tk-grid,#reporte-cierre-export .tk-grid{display:grid;gap:16px;grid-template-columns:1fr;margin-bottom:16px}
+@media(min-width:768px){#v-turno .tk-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+#reporte-cierre-export .tk-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+:is(#v-turno,#reporte-cierre-export) .sc.alerta{background:var(--badbg);border-color:color-mix(in srgb,var(--bad) 28%,transparent)}
+:is(#v-turno,#reporte-cierre-export) .sc.alerta .sc-v{color:var(--bad)}
+.tpb{display:flex;align-items:center;gap:8px;min-width:150px}
+.tpb .bar{flex:1;height:8px;min-width:56px;border-radius:99px;background:var(--seg);overflow:hidden}
+.tpb .bar i{display:block;height:100%;border-radius:99px;background:var(--ok)}
+.tpb.warn .bar i{background:var(--warn)}.tpb.bad .bar i{background:var(--bad)}
+.tpb span{font-size:12.5px;white-space:nowrap}
+:is(#v-turno,#reporte-cierre-export) .sc-u{font-size:13px;font-weight:700;letter-spacing:0;color:var(--mute);margin-left:6px}
+.tbd{display:inline-block;border-radius:999px;padding:2px 10px;font-size:12px;font-weight:700;white-space:nowrap}
+.tbd.az{background:rgba(23,105,194,.13);color:var(--acc)}.tbd.am{background:var(--warnbg);color:var(--warn)}.tbd.rj{background:var(--badbg);color:var(--bad)}
+.dlg .dcamp textarea{width:100%;padding:12px 13px;border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink);font:inherit;font-size:15px;resize:vertical;min-height:96px}
+#cierre-wrap{position:fixed;left:-10000px;top:0;pointer-events:none}
+#reporte-cierre-export{--bg:#f2f6fb;--card:#fff;--ink:#162037;--mute:#6b7689;--line:#e1e7f0;--seg:#d5dae1;--acc:#1769c2;--estp:#082b5c;--esto:#f36f21;--orangesoft:#fff0e7;--ok:#157a43;--warn:#9a6700;--bad:#b42318;--okbg:#e4f4ea;--warnbg:#fdf1d6;--badbg:#fbe8e5;
+  width:800px;box-sizing:border-box;padding:28px 28px 20px;background:#fff;color:var(--ink);font-family:inherit;line-height:1.35}
+#reporte-cierre-export .rc-h{border-bottom:3px solid var(--esto);padding-bottom:12px;margin-bottom:16px}
+#reporte-cierre-export .rc-h h1{margin:0;font-size:24px;font-weight:800;letter-spacing:.01em;color:var(--estp)}
+#reporte-cierre-export .rc-m{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+#reporte-cierre-export .rc-m span{background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:3px 12px;font-size:13px;color:var(--mute)}
+#reporte-cierre-export .rc-m b{color:var(--ink)}
+#reporte-cierre-export table{width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed}
+#reporte-cierre-export th:nth-child(1){width:20%}#reporte-cierre-export th:nth-child(2){width:11%}#reporte-cierre-export th:nth-child(3){width:7%}#reporte-cierre-export th:nth-child(4){width:23%}#reporte-cierre-export th:nth-child(5){width:8%}#reporte-cierre-export th:nth-child(6){width:11%}#reporte-cierre-export th:nth-child(7){width:7%}#reporte-cierre-export th:nth-child(8){width:13%}
+#reporte-cierre-export td:last-child .tbd{white-space:normal;text-align:center;line-height:1.2}
+#reporte-cierre-export .tpb span{font-size:11.5px}
+#reporte-cierre-export th{text-align:left;font-size:9.5px;letter-spacing:.02em;white-space:normal;vertical-align:bottom;text-transform:uppercase;color:var(--mute);padding:6px 6px;border-bottom:1px solid var(--line)}
+#reporte-cierre-export td{padding:7px 6px;border-bottom:1px solid var(--line);vertical-align:middle}
+#reporte-cierre-export .tpb{min-width:0}
+#reporte-cierre-export .rc-obs{margin-top:14px;padding:12px 14px;border-radius:12px;background:var(--warnbg);border:1px solid color-mix(in srgb,var(--warn) 35%,transparent)}
+#reporte-cierre-export .rc-obs b{display:block;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--warn);margin-bottom:4px}
+#reporte-cierre-export .rc-obs div{white-space:pre-wrap;font-size:13.5px}
+#reporte-cierre-export .rc-f{margin-top:16px;padding-top:10px;border-top:1px solid var(--line);font-size:12px;color:var(--mute)}
 .est-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-bottom:16px}
 .est-k{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--esto);border-radius:16px;padding:14px 16px;min-width:0;font-size:13.5px;box-shadow:0 1px 2px rgba(8,43,92,.06),0 8px 22px rgba(8,43,92,.06)}
 .est-k>div:first-child{font-weight:600}
@@ -811,10 +844,11 @@ body.adm .card input,body.adm .card select,body.adm .est-fil input,body.adm .est
           <select id="tTurno" style="width:auto"></select>
           <select id="tProy" style="width:auto"></select>
           <button class="btn sm" id="btnTHoy">Turno actual</button>
+          <button class="btn sm pri" id="btnCierre" title="Descargar el cierre de turno como imagen PNG"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:5px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>Descargar Cierre</button>
         </div>
       </div>
       <div class="mute" id="tInfo" style="font-size:12.5px;margin-bottom:10px"></div>
-      <div class="stats" id="tKpi" style="margin-bottom:14px"></div>
+      <div id="tKpi" style="margin-bottom:14px"></div>
       <div class="scroll" id="tPorChofer"></div>
     </div>
     <div class="card"><h2>Viajes del turno</h2><div class="scroll" id="tViajes"></div></div>
@@ -2173,6 +2207,97 @@ function incViaje(v){
 /* Turnos: ventana por fecha y turno */
 
 function pctCls(p){return p>=0.9?'free':p>=0.7?'busy':'off'}
+/* ---- Turnos: datos y piezas visuales (pantalla y PNG del cierre de turno) ---- */
+function turnoDatos(tt){
+  const A=S.A;
+  const rows=A.viajes.filter(v=>(v.estado==='finalizado'||v.estado==='activo')&&v.turno===tt.turno&&(!tt.proy||v.proyecto===tt.proy)&&diaOp(refMs(v),tt.turno)===tt.fecha);
+  const fin=rows.filter(v=>v.estado==='finalizado'),act=rows.filter(v=>v.estado==='activo');
+  const ciclo=prom(fin.map(v=>dur(v,METRICAS[7]))),durm=prom(fin.map(v=>dur(v,METRICAS[6])));
+  const unidades=new Set(rows.map(v=>v.placa)).size,vpu=unidades?fin.length/unidades:0;
+  const I=incTurno(tt);
+  const g={};rows.forEach(v=>{const k=v.chofer_id||v.chofer;(g[k]=g[k]||{chofer:v.chofer,placas:new Set(),n:0,c:[],act:false,paso:0});const x=g[k];x.placas.add(v.placa);if(v.estado==='finalizado'){x.n++;const d=dur(v,METRICAS[7]);if(d>0)x.c.push(d)}else{x.act=true;x.paso=v.paso||0}});
+  const gl=Object.values(g).sort((a,b)=>b.n-a.n);
+  const abiertas=(A.paradas||[]).filter(p=>p.estado==='abierta');
+  gl.forEach(x=>{x.ahora=!x.act?'':abiertas.some(p=>x.placas.has(p.placa))?'rj':([1,4].includes(x.paso)?'am':'az')});
+  return{rows,fin,act,ciclo,durm,unidades,vpu,I,gl,meta:unidades*META_TURNO};
+}
+const T_SEM={free:'ok',busy:'warn',off:'bad'},T_ETQ={ok:'En meta',warn:'Atención',bad:'Bajo meta'},T_AHORA={az:'En viaje',am:'En cola / terminal',rj:'Detenido'};
+function turnoCardsHtml(D){
+  const{fin,act,ciclo,durm,unidades,vpu,I,meta}=D;
+  const p1=meta?fin.length/meta:null,e1=p1==null?'':T_SEM[pctCls(p1)];
+  const e2=unidades?T_SEM[pctCls(vpu/META_TURNO)]:'';
+  const eC=ciclo==null?'':ciclo>META_CICLO?'bad alerta':'ok';
+  const tot=I.par+I.nov+I.reg;
+  return `<div class="tk-grid">`+
+    estSc('Producción total',`${fin.length} / ${meta}`,p1==null?'':T_ETQ[e1],`${p1==null?'—':Math.round(p1*100)} % de avance • ${act.length} en curso`,e1,p1,'target')+
+    estSc('Ritmo por unidad',`${vpu.toFixed(1)}<span class="sc-u">viajes/und</span>`,e2?T_ETQ[e2]:'',`Meta: ${META_TURNO} • ${unidades} unidades activas`,e2,unidades?vpu/META_TURNO:null,'gauge')+
+    estSc('Tiempo de ciclo',fdur(ciclo),ciclo==null?'':ciclo>META_CICLO?'Sobre la meta':'Dentro de la meta',`Meta: ${META_CICLO/60000}m • Viaje puro: ${fdur(durm)}`,eC,null,'cycle')+
+    estSc('Calidad e incidencias',String(tot),tot?(I.n?(tot/I.n*100).toFixed(1)+' por 100 viajes':''):'Sin novedades',`${I.par} ${I.par===1?'parada':'paradas'} • ${I.nov} ${I.nov===1?'novedad':'novedades'} checklist • ${I.reg} ${I.reg===1?'error':'errores'} registro`,tot?'warn':'ok',null,'alert')+
+    `</div>`;
+}
+function turnoTablaHtml(D){
+  const{gl,ciclo,I}=D;
+  const incU=pls=>I.pa.filter(p=>pls.has(p.placa)).length+I.js.filter(j=>pls.has(j.placa)).reduce((a,j)=>a+novN(j.checklist),0);
+  return `<table><thead><tr><th>Chofer</th><th>Placa</th><th>Viajes</th><th>Avance vs meta ${META_TURNO}</th><th>Por hora</th><th>Ciclo promedio</th><th>Incid. mec.</th><th>Ahora</th></tr></thead><tbody>`+
+    gl.map(x=>{
+      const p=x.n/META_TURNO,im=incU(x.placas),cp=x.c.length?x.c.reduce((a,b)=>a+b,0)/x.c.length:null;
+      const pc=T_SEM[pctCls(p)],lento=cp!=null&&(cp>90*60000||(ciclo&&cp>ciclo*1.5));
+      return `<tr><td>${esc(x.chofer)}</td><td style="white-space:nowrap"><b>${[...x.placas].map(esc).join(', ')}</b></td><td class="mono"><b>${x.n}</b></td>`+
+        `<td><div class="tpb ${pc==='ok'?'':pc}"><div class="bar"><i style="width:${Math.min(100,Math.round(p*100))}%"></i></div><span><b>${Math.round(p*100)}%</b> (faltan ${Math.max(0,META_TURNO-x.n)})</span></div></td>`+
+        `<td class="mono">${(x.n/HORAS_TURNO).toFixed(2)}</td><td class="mono">${lento?`<span class="tbd rj">${fdur(cp)}</span>`:fdur(cp)}</td><td class="mono">${im||'—'}</td>`+
+        `<td>${x.ahora?`<span class="tbd ${x.ahora}">${T_AHORA[x.ahora]}</span>`:'<span class="mute">—</span>'}</td></tr>`}).join('')+`</tbody></table>`;
+}
+function turnoEc(ms){
+  const f=new Intl.DateTimeFormat('es-EC',{timeZone:'America/Guayaquil',day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).formatToParts(new Date(ms)),o={};f.forEach(x=>{o[x.type]=x.value});
+  return `${o.day}/${o.month}/${o.year} ${String(o.hour).replace('24','00')}:${o.minute}:${o.second}`;
+}
+function turnoQuien(){const w=String(S.who||'').trim();return w?w.charAt(0).toUpperCase()+w.slice(1).toLowerCase():'Despacho'}
+function turnoExportHtml(tt,D,obs,quien,cuando){
+  return `<div class="rc-h"><h1>REPORTE DE CIERRE DE TURNO</h1><div class="rc-m"><span>Fecha: <b>${esc(tt.fecha.split('-').reverse().join('/'))}</b></span><span>Turno: <b>${esc(tt.turno)}</b></span><span>Proyecto: <b>${esc(tt.proy||'Todos los proyectos')}</b></span></div></div>`+
+    turnoCardsHtml(D)+
+    (D.rows.length?turnoTablaHtml(D):'<div class="mute" style="padding:10px 0">No hay viajes en este turno.</div>')+
+    (obs?`<div class="rc-obs"><b>Observación del turno</b><div>${esc(obs)}</div></div>`:'')+
+    `<div class="rc-f">Generado por: <b>${esc(quien)}</b> • Fecha y hora exacta: <b>${esc(cuando)}</b></div>`;
+}
+function turnoLib(){
+  if(window.htmlToImage)return Promise.resolve(window.htmlToImage);
+  if(S.h2iLib)return S.h2iLib;
+  const urls=['https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js','https://unpkg.com/html-to-image@1.11.11/dist/html-to-image.js'];
+  const load=i=>new Promise((ok,no)=>{if(i>=urls.length)return no(new Error('No se pudo cargar el generador de imágenes. Revisa tu conexión e intenta de nuevo.'));const sc=document.createElement('script');sc.src=urls[i];sc.onload=()=>window.htmlToImage?ok(window.htmlToImage):load(i+1).then(ok,no);sc.onerror=()=>load(i+1).then(ok,no);document.head.appendChild(sc)});
+  S.h2iLib=load(0).catch(e=>{S.h2iLib=null;throw e});return S.h2iLib;
+}
+async function cierreDescargar(obs){
+  const tt=S.tt||Object.assign(turnoNow(),{proy:''}),D=turnoDatos(tt);
+  const lib=await turnoLib();
+  const wrap=document.createElement('div');wrap.id='cierre-wrap';
+  wrap.innerHTML=`<div id="reporte-cierre-export">${turnoExportHtml(tt,D,String(obs||'').trim(),turnoQuien(),turnoEc(Date.now()))}</div>`;
+  document.body.appendChild(wrap);
+  try{
+    try{if(document.fonts&&document.fonts.ready)await document.fonts.ready}catch(_){}
+    const url=await lib.toPng(wrap.firstChild,{pixelRatio:2,backgroundColor:'#ffffff',cacheBust:true});
+    const a=document.createElement('a');a.href=url;a.download=`Cierre_Turno_${tt.turno}_${tt.fecha}.png`;document.body.appendChild(a);a.click();a.remove();
+  }finally{wrap.remove()}
+}
+function cierreDlg(){
+  if(!S.A||document.querySelector('.dlg-ov'))return;
+  const tt=S.tt||Object.assign(turnoNow(),{proy:''});
+  const ov=document.createElement('div');ov.className='dlg-ov';
+  ov.innerHTML=`<div class="dlg" role="dialog" aria-modal="true" aria-labelledby="cdT"><div class="di"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg></div><h3 id="cdT">Descargar cierre de turno</h3><div class="dsub">${esc(tt.turno)} · ${esc(tt.fecha.split('-').reverse().join('/'))}</div><div class="dcamp"><label for="cdObs">Observación del turno (opcional)</label><textarea id="cdObs" maxlength="600" placeholder="Ej. congestión en garita del terminal, falla en sistema portuario"></textarea></div><div class="dbt"><button type="button" class="dno">Cancelar</button><button type="button" class="dsi">Confirmar y descargar PNG</button></div></div>`;
+  document.body.appendChild(ov);requestAnimationFrame(()=>ov.classList.add('in'));
+  let busy=false;
+  const cerrar=()=>{if(busy)return;document.removeEventListener('keydown',kd,true);ov.classList.remove('in');setTimeout(()=>ov.remove(),180)};
+  const kd=e=>{if(e.key==='Escape'){e.preventDefault();cerrar()}};
+  document.addEventListener('keydown',kd,true);
+  ov.addEventListener('click',e=>{if(e.target===ov)cerrar()});
+  ov.querySelector('.dno').onclick=cerrar;
+  const si=ov.querySelector('.dsi');
+  si.onclick=async()=>{
+    if(busy)return;busy=true;si.textContent='Generando imagen…';si.disabled=true;
+    try{await cierreDescargar(ov.querySelector('#cdObs').value);busy=false;cerrar();toast('Cierre de turno descargado')}
+    catch(e){busy=false;si.disabled=false;si.textContent='Confirmar y descargar PNG';toast(msg(e))}
+  };
+  setTimeout(()=>{const f=ov.querySelector('#cdObs');f&&f.focus()},60);
+}
 function renderTurnoTab(){
   if(!S.A)return;
   if(!S.tt)S.tt=Object.assign(turnoNow(),{proy:''});
@@ -2180,18 +2305,11 @@ function renderTurnoTab(){
   if($('#tFecha').value!==tt.fecha)$('#tFecha').value=tt.fecha;
   if($('#tTurno').value!==tt.turno)$('#tTurno').value=tt.turno;
   if($('#tProy').value!==tt.proy)$('#tProy').value=tt.proy;
-  const rows=S.A.viajes.filter(v=>(v.estado==='finalizado'||v.estado==='activo')&&v.turno===tt.turno&&(!tt.proy||v.proyecto===tt.proy)&&diaOp(refMs(v),tt.turno)===tt.fecha);
-  const fin=rows.filter(v=>v.estado==='finalizado'),act=rows.filter(v=>v.estado==='activo');
-  const ciclo=prom(fin.map(v=>dur(v,METRICAS[7]))),durm=prom(fin.map(v=>dur(v,METRICAS[6])));
-  const unidades=new Set(rows.map(v=>v.placa)).size,vpu=unidades?fin.length/unidades:0;
+  const D=turnoDatos(tt),rows=D.rows;
   $('#tInfo').textContent=tt.turno==='Nocturno'?'Turno nocturno: los viajes registrados antes de las 12:00 cuentan en el día anterior.':'Turno diurno.';
-  $('#tKpi').innerHTML=`<span class="stat"><b>${fin.length}</b>viajes finalizados</span><span class="stat"><b>${act.length}</b>en curso</span><span class="stat"><b>${unidades}</b>unidades</span><span class="stat"><b>${vpu.toFixed(1)}</b>viajes por unidad (meta ${META_TURNO})</span><span class="stat"><b>${fdur(ciclo)}</b>ciclo promedio (meta ${META_CICLO/60000} min)</span><span class="stat"><b>${fdur(durm)}</b>duración promedio del viaje</span>`+(()=>{const I=incTurno(tt),r=x=>I.n?(x/I.n*100).toFixed(1):'—';return`<span class="stat"><b>${r(I.mec)}</b>incidencia mecánica por 100 viajes (${I.par} paradas + ${I.nov} novedades de checklist)</span><span class="stat"><b>${r(I.reg)}</b>incidencia de registro por 100 viajes (${I.dup} duplicados + ${I.an} relevos anulados)</span>`})();
+  $('#tKpi').innerHTML=turnoCardsHtml(D);
   if(!rows.length){$('#tPorChofer').innerHTML='<div class="empty">No hay viajes en este turno.</div>';$('#tViajes').innerHTML='';return}
-  const g={};rows.forEach(v=>{const k=v.chofer_id||v.chofer;(g[k]=g[k]||{chofer:v.chofer,placas:new Set(),n:0,c:[],act:false});const x=g[k];x.placas.add(v.placa);if(v.estado==='finalizado'){x.n++;const d=dur(v,METRICAS[7]);if(d>0)x.c.push(d)}else x.act=true});
-  const gl=Object.values(g).sort((a,b)=>b.n-a.n);
-  const I2=incTurno(tt),incU=pls=>I2.pa.filter(p=>pls.has(p.placa)).length+I2.js.filter(j=>pls.has(j.placa)).reduce((a,j)=>a+novN(j.checklist),0);
-  $('#tPorChofer').innerHTML=`<table><thead><tr><th>Chofer</th><th>Placa</th><th>Viajes</th><th>Avance vs meta ${META_TURNO}</th><th>Por hora</th><th>Ciclo promedio</th><th>Incidencias mecánicas</th><th>Ahora</th></tr></thead><tbody>`+
-    gl.map(x=>{const p=x.n/META_TURNO,im=incU(x.placas);return`<tr><td>${esc(x.chofer)}</td><td><b>${[...x.placas].map(esc).join(', ')}</b></td><td class="mono"><b>${x.n}</b></td><td><span class="b ${pctCls(p)}">${Math.round(p*100)}%</span> <span class="mute" style="font-size:12px">faltan ${Math.max(0,META_TURNO-x.n)}</span></td><td class="mono">${(x.n/HORAS_TURNO).toFixed(2)}</td><td class="mono">${fdur(x.c.length?x.c.reduce((a,b)=>a+b,0)/x.c.length:null)}</td><td class="mono">${im||'—'}</td><td>${x.act?'<span class="b busy">En viaje</span>':'<span class="mute">—</span>'}</td></tr>`}).join('')+`</tbody></table>`;
+  $('#tPorChofer').innerHTML=turnoTablaHtml(D);
   const lst=rows.slice().sort((a,b)=>refMs(b)-refMs(a));
   $('#tViajes').innerHTML=`<table><thead><tr><th>Hora</th><th>Chofer</th><th>Placa</th><th>Proyecto</th><th>Ruta</th><th>Contenedor</th><th>Observación</th><th>Duración</th><th>Ciclo</th><th>Estado</th></tr></thead><tbody>`+
     lst.map(v=>`<tr><td class="mono">${v.estado==='finalizado'?hora(v.t6):'—'}</td><td>${esc(v.chofer)}</td><td><b>${esc(v.placa)}</b></td><td>${pj(v.proyecto)}</td><td>${(v.origen||v.destino)?esc(v.origen)+' → '+esc(v.destino):'—'}</td><td class="mono">${v.contenedor?esc(v.contenedor)+' · '+esc(v.medida):'—'}</td><td>${esc(v.observaciones)||'—'}</td><td class="mono">${v.estado==='finalizado'?fdur(dur(v,METRICAS[6])):'—'}</td><td class="mono">${v.estado==='finalizado'&&dur(v,METRICAS[7])!=null?fdur(dur(v,METRICAS[7])):'—'}</td><td>${v.estado==='finalizado'?'<span class="b free">Finalizado</span>':`<span class="b busy">${ESTADOS[v.paso||0]}</span>`}</td></tr>`).join('')+`</tbody></table>`;
@@ -2806,6 +2924,7 @@ document.addEventListener('click',e=>{
   if(t.id==='bell'){S.bellOpen=!S.bellOpen;renderAlertas();return}
   if(t.id==='btnRefresh'||t.id==='btnRefresh2'){if(S.mode==='visor')loadVisor();else{S.forzar=true;loadAdmin()}}
   else if(t.id==='btnTHoy'){S.tt=null;renderTurnoTab()}
+  else if(t.id==='btnCierre')cierreDlg();
   else if(t.id==='btnTPrev'||t.id==='btnTNext'){if(!S.tt)S.tt=Object.assign(turnoNow(),{proy:''});S.tt.fecha=shiftDay(S.tt.fecha,t.id==='btnTPrev'?-1:1);renderTurnoTab()}
   else if(t.id==='btnRole'){
     if(S.mode==='admin'||S.mode==='visor')logout();else{show('login');setTimeout(()=>$('#pin').focus(),50)}
