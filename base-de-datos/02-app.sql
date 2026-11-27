@@ -1223,7 +1223,7 @@ create or replace function f_conc_viajes(p_lunes text) returns jsonb language sq
 
 create or replace function f_conciliacion(p_lunes text) returns jsonb language plpgsql stable as $$
 declare sem jsonb := cc_semanas(); lu text := p_lunes; t jsonb; tp record; soloapp jsonb := '[]'; solotpg jsonb := '[]';
-        a record; x record; mejor record; md int; dd int; usados text[] := '{}'; sug jsonb; sugtpg jsonb := '{}'; tarifa jsonb := cfg('tpg');
+        ap record; x record; mc text; mdia text; mplaca text; md int; dd int; usados text[] := '{}'; sug jsonb; sugtpg jsonb := '{}'; tarifa jsonb := cfg('tpg');
         hc numeric := 0; penh numeric := 0; g record;
 begin
   if jsonb_array_length(sem) = 0 then return jsonb_build_object('semanas', '[]'::jsonb, 'sel', ''); end if;
@@ -1246,19 +1246,19 @@ begin
   end loop;
   select coalesce(jsonb_agg(z order by (z ->> '_id')::bigint), '[]') into solotpg from jsonb_array_elements(solotpg) z;
   -- solo en la app, con sugerencia de posible error de tipeo (1 o 2 caracteres de diferencia)
-  for a in select * from cc_app(lu) a where not exists (select 1 from tpg_reporte r where r.semana = lu and r.contenedor = a.c) loop
-    md := 3; mejor := null; sug := null;
+  for ap in select * from cc_app(lu) a where not exists (select 1 from tpg_reporte r where r.semana = lu and r.contenedor = a.c) loop
+    md := 3; mc := null; mdia := null; mplaca := null; sug := null;
     for x in select z ->> 'c' c, z ->> 'dia' dia, z ->> 'placa' placa from jsonb_array_elements(solotpg) z where not ((z ->> 'c') = any (usados)) loop
-      dd := cc_dist(a.c, x.c);
-      if dd < md or (dd = md and mejor is not null and x.placa = a.placa and mejor.placa <> a.placa) then md := dd; mejor := x; end if;
+      dd := cc_dist(ap.c, x.c);
+      if dd < md or (dd = md and mc is not null and x.placa = ap.placa and mplaca is distinct from ap.placa) then md := dd; mc := x.c; mdia := x.dia; mplaca := x.placa; end if;
     end loop;
-    if mejor is not null and md <= 2 then
-      usados := usados || mejor.c;
-      sug := jsonb_build_object('c', mejor.c, 'dia', mejor.dia, 'placa', mejor.placa, 'd', md);
-      sugtpg := sugtpg || jsonb_build_object(mejor.c, jsonb_build_object('id', a.id, 'c', a.c, 'dia', a.dia, 'placa', a.placa, 'd', md));
+    if mc is not null and md <= 2 then
+      usados := usados || mc;
+      sug := jsonb_build_object('c', mc, 'dia', mdia, 'placa', mplaca, 'd', md);
+      sugtpg := sugtpg || jsonb_build_object(mc, jsonb_build_object('id', ap.id, 'c', ap.c, 'dia', ap.dia, 'placa', ap.placa, 'd', md));
     end if;
-    soloapp := soloapp || (jsonb_build_object('id', a.id, 'c', a.raw, 'cn', a.c, 'dia', a.dia, 'placa', a.placa, 'chofer', a.chofer,
-      'ruta', a.o || ' → ' || a.d, 'malo', a.c !~ '^[A-Z]{4}[0-9]{7}$', 'iso', a.c ~ '^[A-Z]{4}[0-9]{7}$' and not cont_ok(a.c))
+    soloapp := soloapp || (jsonb_build_object('id', ap.id, 'c', ap.raw, 'cn', ap.c, 'dia', ap.dia, 'placa', ap.placa, 'chofer', ap.chofer,
+      'ruta', ap.o || ' → ' || ap.d, 'malo', ap.c !~ '^[A-Z]{4}[0-9]{7}$', 'iso', ap.c ~ '^[A-Z]{4}[0-9]{7}$' and not cont_ok(ap.c))
       || case when sug is null then '{}'::jsonb else jsonb_build_object('sug', sug) end);
   end loop;
   select coalesce(jsonb_agg((z - '_id') || case when sugtpg ? (z ->> 'c') then jsonb_build_object('sug', sugtpg -> (z ->> 'c')) else '{}'::jsonb end), '[]')
