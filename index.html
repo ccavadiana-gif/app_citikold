@@ -584,6 +584,8 @@ table.est-t tr.tot td{font-weight:650;border-top:2px solid var(--line)}
  body.adm.navcol nav>button b.cnt{position:absolute;top:0;right:0;margin:0;min-width:18px;height:18px;font-size:10px}
  body.adm nav .navfil{display:grid;grid-template-columns:1fr 1fr;gap:8px 10px;margin-top:10px;padding:12px;border-radius:20px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12)}
  body.adm nav .navfil:empty{display:none}
+ body.adm nav .navfil{animation:navfilIn .22s ease-out;margin-bottom:6px}
+ @keyframes navfilIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
  .navfil h3,.navfil>label:nth-of-type(n+5),.navfil .btn{grid-column:1/-1}
  .navfil h3{margin:0 0 2px;font-size:10px;letter-spacing:.14em;font-weight:800;color:rgba(255,255,255,.5)}
  .navfil label{display:grid;gap:4px;font-size:11.5px;font-weight:700;color:rgba(255,255,255,.66)}
@@ -1126,7 +1128,7 @@ function renderNav(){
   const w=String(S.who||'').trim();
   setHtml($('#who'),S.mode==='admin'&&w?`<span class="av">${esc(w.charAt(0).toUpperCase())}</span><span>${esc(w.charAt(0).toUpperCase()+w.slice(1).toLowerCase())}</span>`:'');
   if(S.mode!=='admin'){setHtml(nav,'');return}
-  setHtml(nav,navTop()+GRUPOS.map(gr=>gr.secciones.some(sc=>puede(sc.k))?`<div class="grp">${gr.titulo}</div>`+gr.secciones.filter(sc=>puede(sc.k)).map(sc=>{const n=sc.insignia?sc.insignia():0;return`<button data-tab="${sc.k}" title="${sc.etiqueta}" class="${S.tab===sc.k?'on':''}${MAS_K.includes(sc.k)?' sec':''}">${ico(sc.icono)}<span>${sc.etiqueta}</span>${n?`<b class="cnt">${n}</b>`:''}</button>`}).join(''):'').join('')+(S.tab==='est'&&puede('est')?'<div class="navfil" id="navFil"></div>':''));
+  setHtml(nav,navTop()+GRUPOS.map(gr=>gr.secciones.some(sc=>puede(sc.k))?`<div class="grp">${gr.titulo}</div>`+gr.secciones.filter(sc=>puede(sc.k)).map(sc=>{const n=sc.insignia?sc.insignia():0;return`<button data-tab="${sc.k}" title="${sc.etiqueta}" class="${S.tab===sc.k?'on':''}${MAS_K.includes(sc.k)?' sec':''}">${ico(sc.icono)}<span>${sc.etiqueta}</span>${n?`<b class="cnt">${n}</b>`:''}</button>`+(sc.k==='est'&&S.tab==='est'?'<div class="navfil" id="navFil"></div>':'')}).join(''):'').join(''));
   pintaFiltrosEst();
   let sh=document.getElementById('masSheet');if(!sh){sh=document.createElement('div');sh.id='masSheet';document.body.appendChild(sh)}
   sh.className='mas-sheet'+(S.masOpen?' open':'');
