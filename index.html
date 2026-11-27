@@ -506,6 +506,22 @@ nav .mas-sheet .salir{display:none}
 .est-fil{display:flex;flex-wrap:wrap;gap:10px 12px;align-items:flex-end}
 .est-fil label{display:grid;gap:4px;font-size:12px;color:var(--mute)}
 .est-fil input,.est-fil select{min-width:9rem}
+#estBox .sc-sec{margin:18px 0 8px;font-size:12px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--mute)}
+#estBox .sc-grid{display:grid;gap:12px;margin-bottom:16px;grid-template-columns:repeat(auto-fit,minmax(215px,1fr))}
+#estBox .sc-grid.s2{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+#estBox .sc{position:relative;overflow:hidden;min-width:0;display:flex;flex-direction:column;gap:9px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 14px 14px;box-shadow:0 1px 2px rgba(8,43,92,.06),0 10px 26px -14px rgba(8,43,92,.22);--sc:var(--esto);--scbg:var(--orangesoft)}
+#estBox .sc.ok{--sc:var(--ok);--scbg:var(--okbg)}#estBox .sc.warn{--sc:var(--warn);--scbg:var(--warnbg)}#estBox .sc.bad{--sc:var(--bad);--scbg:var(--badbg)}
+#estBox .sc-bar{position:absolute;left:0;right:0;top:0;height:4px;background:var(--sc)}
+#estBox .sc-h{display:flex;align-items:center;gap:9px}
+#estBox .sc-i{flex:none;display:grid;place-items:center;width:34px;height:34px;border-radius:11px;background:var(--scbg);color:var(--sc)}
+#estBox .sc-i svg{width:18px;height:18px}
+#estBox .sc h3{margin:0;font-size:13px;font-weight:700;line-height:1.2;color:var(--mute);min-width:0}
+#estBox .sc-v{font-size:32px;font-weight:800;line-height:1;letter-spacing:-.02em;color:var(--estp);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+#estBox .sc-p{height:8px;border-radius:99px;background:var(--seg);overflow:hidden}
+#estBox .sc-p i{display:block;height:100%;border-radius:99px;background:var(--sc);transition:width .7s}
+#estBox .sc-t{display:block;width:fit-content;max-width:100%;font-size:12px;font-weight:800;padding:2px 10px;border-radius:99px;background:var(--scbg);color:var(--sc)}
+#estBox .sc-n{font-size:12px;line-height:1.35;color:var(--mute);margin-top:auto}
+@media(max-width:700px){#estBox .sc-grid,#estBox .sc-grid.s2{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}#estBox .sc-v{font-size:26px}#estBox .sc{padding:14px 12px 12px}#estBox .sc-n{font-size:11.5px}}
 .est-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-bottom:16px}
 .est-k{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--esto);border-radius:16px;padding:14px 16px;min-width:0;font-size:13.5px;box-shadow:0 1px 2px rgba(8,43,92,.06),0 8px 22px rgba(8,43,92,.06)}
 .est-k>div:first-child{font-weight:600}
@@ -1337,6 +1353,22 @@ function estTbl(head,rows,cols,opt){
     rows.length?rows.map(r=>`<tr>${cols.map(([k,fm,tone])=>{const t=tone&&tone(r);return`<td${t?` class="est-${t}"`:''}>${esc(fm(r[k]))}</td>`}).join('')}</tr>`).join(''):`<tr><td colspan="${head.length}" class="empty" style="text-align:center">Sin datos con estos filtros</td></tr>`}</tbody></table></div>`;
 }
 const estKpi=(t,v,tag,nota,e)=>`<div class="est-k${e?' '+e:''}"><div>${t}</div><b>${v}</b><span class="tag">${tag||''}</span><div class="nota">${nota}</div></div>`;
+/* Tarjetas de la pestaña Estadísticas (diseño de Lovable "Stat Card Studio"): franja de color, ícono, número grande, barra de avance y etiqueta de semáforo */
+const SC_IC={
+  gauge:'<path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/>',
+  target:'<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>',
+  truck:'<path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/>',
+  cycle:'<path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/>',
+  route:'<circle cx="6" cy="19" r="3"/><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"/><circle cx="18" cy="5" r="3"/>',
+  timer:'<line x1="10" x2="14" y1="2" y2="2"/><line x1="12" x2="15" y1="14" y2="11"/><circle cx="12" cy="14" r="8"/>',
+  alert:'<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/>',
+  pause:'<circle cx="12" cy="12" r="10"/><line x1="10" x2="10" y1="15" y2="9"/><line x1="14" x2="14" y1="15" y2="9"/>',
+  hourglass:'<path d="M5 22h14"/><path d="M5 2h14"/><path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22"/><path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2"/>'
+};
+const estSc=(t,v,tag,nota,e,prog,ic)=>{
+  const pr=(prog==null||!isFinite(prog))?null:Math.max(0,Math.min(1,prog));
+  return `<div class="sc${e?' '+e:''}"><span class="sc-bar"></span><div class="sc-h"><span class="sc-i"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${SC_IC[ic]||''}</svg></span><h3>${t}</h3></div><div class="sc-v">${v}</div>${pr==null?'':`<div class="sc-p"><i style="width:${Math.round(pr*100)}%"></i></div>`}${tag?`<span class="sc-t">${tag}</span>`:''}<div class="sc-n">${nota}</div></div>`;
+};
 const estSelect=(f,todas,vals,cur,dis)=>`<select data-f="${f}"${dis?' disabled':''}><option value="">${todas}</option>${vals.map(v=>{const[val,txt]=Array.isArray(v)?v:[v,v];return`<option value="${esc(val)}"${val===cur?' selected':''}>${esc(txt)}</option>`}).join('')}</select>`;
 
 /* ---------- carga y dibujo de la sección ---------- */
@@ -1504,16 +1536,20 @@ function renderEst_(){
   ${S.est.aviso?`<div class="banner" style="margin-bottom:16px">${esc(S.est.aviso)}</div>`:''}
   <div class="card est-fil">
 ${filInner}  </div>
-  <div class="est-kpis">
-    ${estKpi('Viajes por hora',vph==null?'—':estF2(vph),est?EST_ETQ[est]+' · '+estPf(vph/EST_VPH)+' de la meta':'',vivo?'Por unidad, desde el inicio del turno. Meta: 2':'Por unidad, en turnos completos de 11 horas. Meta: 2',est)}
-    ${estKpi('Faltan para la meta',vt==null?'—':estF1(Math.max(0,EST_TURNO-vt)),est?EST_ETQ[est]+' · '+estPf(vph/EST_VPH)+' de la meta':'',nota,est)}
-    ${estKpi('Promedio de viajes por turno',vt==null?'—':estF1(vt),eP?TAGP[eP]:'',vt==null?'Por unidad y turno. Mínimo: 18':vivo?'Viajes por unidad hasta ahora. A esta hora el mínimo sería '+estF1(base)+' (18 al cierre)':'Por unidad en turnos completos. Mínimo: 18 ('+(vt>=EST_MIN?'sobra '+estF1(vt-EST_MIN):'faltan '+estF1(EST_MIN-vt))+')',eP)}
-    ${estKpi('Viajes',estF(sel.length),'','Movimientos registrados con los filtros actuales','')}
-    ${estKpi('Ciclo por viaje',cic?estMin(cic):'—',eC?EST_ETQ[eC]+' · '+estPf(EST_CICLO/cic)+' de la meta':'','Mediana del tiempo entre el inicio de un viaje y el inicio del siguiente de la misma unidad, sin paradas ni relevos en medio. Meta: 30 min',eC)}
-    ${estKpi('Duración del viaje',estMin(estDmed(sel)),'','Mediana, de inicio de carga a fin de descarga','')}
-    ${estKpi('Con demora',sel.length?estPf(estPdem(sel)):'—','','Viajes con demora de grúa, de máquina, espera en fila, demora en descarga o en el muelle','')}
-    ${estKpi('Tiempo parado',estHm(parTot),'',estF(parSel.length)+' paradas de la unidad por causa nuestra',parTot?'warn':'')}
-    ${estKpi('Horas perdidas por el terminal',estHm(ptTot),'',ptCic.length?estF(ptExc.length)+' de '+estF(ptCic.length)+' ciclos pasaron de 30 min':'Aún no hay ciclos medidos',ptTot?'warn':'')}
+  <h2 class="sc-sec">Cumplimiento de meta</h2>
+  <div class="sc-grid">
+    ${estSc('Viajes por hora',vph==null?'—':estF2(vph),est?EST_ETQ[est]+' · '+estPf(vph/EST_VPH)+' de la meta':'',vivo?'Por unidad, desde el inicio del turno. Meta: 2':'Por unidad, en turnos completos de 11 horas. Meta: 2',est,vph==null?null:vph/EST_VPH,'gauge')}
+    ${estSc('Faltan para la meta',vt==null?'—':estF1(Math.max(0,EST_TURNO-vt)),est?EST_ETQ[est]+' · '+estPf(vph/EST_VPH)+' de la meta':'',nota,est,vph==null?null:vph/EST_VPH,'target')}
+    ${estSc('Promedio por turno',vt==null?'—':estF1(vt),eP?TAGP[eP]:'',vt==null?'Por unidad y turno. Mínimo: 18':vivo?'Viajes por unidad hasta ahora. A esta hora el mínimo sería '+estF1(base)+' (18 al cierre)':'Por unidad en turnos completos. Mínimo: 18 ('+(vt>=EST_MIN?'sobra '+estF1(vt-EST_MIN):'faltan '+estF1(EST_MIN-vt))+')',eP,vt==null?null:vt/(vivo?base:EST_MIN),'truck')}
+    ${estSc('Ciclo por viaje',cic?estMin(cic):'—',eC?EST_ETQ[eC]+' · '+estPf(EST_CICLO/cic)+' de la meta':'','Mediana del tiempo entre el inicio de un viaje y el inicio del siguiente de la misma unidad, sin paradas ni relevos en medio. Meta: 30 min',eC,cic?EST_CICLO/cic:null,'cycle')}
+  </div>
+  <h2 class="sc-sec">Operación</h2>
+  <div class="sc-grid s2">
+    ${estSc('Viajes',estF(sel.length),'','Movimientos registrados con los filtros actuales','',null,'route')}
+    ${estSc('Duración del viaje',estMin(estDmed(sel)),'','Mediana, de inicio de carga a fin de descarga','',null,'timer')}
+    ${estSc('Con demora',sel.length?estPf(estPdem(sel)):'—','','Viajes con demora de grúa, de máquina, espera en fila, demora en descarga o en el muelle','',null,'alert')}
+    ${estSc('Tiempo parado',estHm(parTot),'',estF(parSel.length)+' paradas de la unidad por causa nuestra',parTot?'warn':'',null,'pause')}
+    ${estSc('Horas perdidas (terminal)',estHm(ptTot),'',ptCic.length?estF(ptExc.length)+' de '+estF(ptCic.length)+' ciclos pasaron de 30 min':'Aún no hay ciclos medidos',ptTot?'warn':'',null,'hourglass')}
   </div>
   <section class="card"><h2>${hTit}</h2><div class="est-nota">${hNota}</div>${chart}</section>
   ${vivo?'':`<section class="card"><h2>${hist?'Tendencia mensual':'Tendencia semanal'}</h2><div class="est-nota">${hist?'Mes a mes. Respeta los filtros de placa, chofer y turno. El último punto, hueco, es el mes en curso':'Semana a semana. Respeta los filtros de placa, chofer y turno. El último punto, hueco, es la semana en curso o incompleta'}</div>
