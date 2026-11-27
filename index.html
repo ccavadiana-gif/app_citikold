@@ -506,22 +506,24 @@ nav .mas-sheet .salir{display:none}
 .est-fil{display:flex;flex-wrap:wrap;gap:10px 12px;align-items:flex-end}
 .est-fil label{display:grid;gap:4px;font-size:12px;color:var(--mute)}
 .est-fil input,.est-fil select{min-width:9rem}
-#estBox .sc-sec{margin:18px 0 8px;font-size:12px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--mute)}
-#estBox .sc-grid{display:grid;gap:12px;margin-bottom:16px;grid-template-columns:repeat(auto-fit,minmax(215px,1fr))}
-#estBox .sc-grid.s2{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
-#estBox .sc{position:relative;overflow:hidden;min-width:0;display:flex;flex-direction:column;gap:9px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 14px 14px;box-shadow:0 1px 2px rgba(8,43,92,.06),0 10px 26px -14px rgba(8,43,92,.22);--sc:var(--esto);--scbg:var(--orangesoft)}
-#estBox .sc.ok{--sc:var(--ok);--scbg:var(--okbg)}#estBox .sc.warn{--sc:var(--warn);--scbg:var(--warnbg)}#estBox .sc.bad{--sc:var(--bad);--scbg:var(--badbg)}
-#estBox .sc-bar{position:absolute;left:0;right:0;top:0;height:4px;background:var(--sc)}
-#estBox .sc-h{display:flex;align-items:center;gap:9px}
-#estBox .sc-i{flex:none;display:grid;place-items:center;width:34px;height:34px;border-radius:11px;background:var(--scbg);color:var(--sc)}
-#estBox .sc-i svg{width:18px;height:18px}
-#estBox .sc h3{margin:0;font-size:13px;font-weight:700;line-height:1.2;color:var(--mute);min-width:0}
-#estBox .sc-v{font-size:32px;font-weight:800;line-height:1;letter-spacing:-.02em;color:var(--estp);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
-#estBox .sc-p{height:8px;border-radius:99px;background:var(--seg);overflow:hidden}
-#estBox .sc-p i{display:block;height:100%;border-radius:99px;background:var(--sc);transition:width .7s}
-#estBox .sc-t{display:block;width:fit-content;max-width:100%;font-size:12px;font-weight:800;padding:2px 10px;border-radius:99px;background:var(--scbg);color:var(--sc)}
-#estBox .sc-n{font-size:12px;line-height:1.35;color:var(--mute);margin-top:auto}
-@media(max-width:700px){#estBox .sc-grid,#estBox .sc-grid.s2{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}#estBox .sc-v{font-size:26px}#estBox .sc{padding:14px 12px 12px}#estBox .sc-n{font-size:11.5px}}
+:is(#estBox,#facBox) .sc-sec{margin:18px 0 8px;font-size:12px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--mute)}
+:is(#estBox,#facBox) .sc-grid{display:grid;gap:12px;margin-bottom:16px;grid-template-columns:repeat(auto-fit,minmax(215px,1fr))}
+:is(#estBox,#facBox) .sc-grid.s2{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+:is(#estBox,#facBox) .sc{position:relative;overflow:hidden;min-width:0;display:flex;flex-direction:column;gap:9px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 14px 14px;box-shadow:0 1px 2px rgba(8,43,92,.06),0 10px 26px -14px rgba(8,43,92,.22);--sc:var(--esto);--scbg:var(--orangesoft)}
+:is(#estBox,#facBox) .sc.ok{--sc:var(--ok);--scbg:var(--okbg)}:is(#estBox,#facBox) .sc.warn{--sc:var(--warn);--scbg:var(--warnbg)}:is(#estBox,#facBox) .sc.bad{--sc:var(--bad);--scbg:var(--badbg)}
+:is(#estBox,#facBox) .sc-bar{position:absolute;left:0;right:0;top:0;height:4px;background:var(--sc)}
+:is(#estBox,#facBox) .sc-h{display:flex;align-items:center;gap:9px}
+:is(#estBox,#facBox) .sc-i{flex:none;display:grid;place-items:center;width:34px;height:34px;border-radius:11px;background:var(--scbg);color:var(--sc)}
+:is(#estBox,#facBox) .sc-i svg{width:18px;height:18px}
+:is(#estBox,#facBox) .sc h3{margin:0;font-size:13px;font-weight:700;line-height:1.2;color:var(--mute);min-width:0}
+:is(#estBox,#facBox) .sc-v{font-size:32px;font-weight:800;line-height:1;letter-spacing:-.02em;color:var(--estp);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+:is(#estBox,#facBox) .sc-p{height:8px;border-radius:99px;background:var(--seg);overflow:hidden}
+:is(#estBox,#facBox) .sc-p i{display:block;height:100%;border-radius:99px;background:var(--sc);transition:width .7s}
+:is(#estBox,#facBox) .sc-t{display:block;width:fit-content;max-width:100%;font-size:12px;font-weight:800;padding:2px 10px;border-radius:99px;background:var(--scbg);color:var(--sc)}
+:is(#estBox,#facBox) .sc-n{font-size:12px;line-height:1.35;color:var(--mute);margin-top:auto}
+@media(max-width:700px){:is(#estBox,#facBox) .sc-grid,:is(#estBox,#facBox) .sc-grid.s2{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}:is(#estBox,#facBox) .sc-v{font-size:26px}:is(#estBox,#facBox) .sc{padding:14px 12px 12px}:is(#estBox,#facBox) .sc-n{font-size:11.5px}}
+#facBox .sc-v{font-size:clamp(20px,2.1vw,28px)}
+@media(max-width:700px){#facBox .sc-v{font-size:21px}}
 .est-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-bottom:16px}
 .est-k{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--esto);border-radius:16px;padding:14px 16px;min-width:0;font-size:13.5px;box-shadow:0 1px 2px rgba(8,43,92,.06),0 8px 22px rgba(8,43,92,.06)}
 .est-k>div:first-child{font-weight:600}
@@ -1355,6 +1357,14 @@ function estTbl(head,rows,cols,opt){
 const estKpi=(t,v,tag,nota,e)=>`<div class="est-k${e?' '+e:''}"><div>${t}</div><b>${v}</b><span class="tag">${tag||''}</span><div class="nota">${nota}</div></div>`;
 /* Tarjetas de la pestaña Estadísticas (diseño de Lovable "Stat Card Studio"): franja de color, ícono, número grande, barra de avance y etiqueta de semáforo */
 const SC_IC={
+  dollar:'<circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 18V6"/>',
+  down:'<polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/>',
+  clock:'<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
+  ban:'<circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/>',
+  receipt:'<path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 17.5v-11"/>',
+  wallet:'<path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/>',
+  filex:'<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="m14.5 12.5-5 5"/><path d="m9.5 12.5 5 5"/>',
+  layers:'<path d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/><path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"/><path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"/>',
   gauge:'<path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/>',
   target:'<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>',
   truck:'<path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/>',
@@ -1673,23 +1683,7 @@ function renderFac_(){
   const T=facAgg(rows,P),W=rows.map(r=>Object.assign({semana:r.semana},facAgg([r],P))),L=W[W.length-1],V=W.length>1?W[W.length-2]:null,eT=estEst(T.pct);
   const FR=[];rows.forEach(w=>{[['horas',w.fact_horas],['mov',w.fact_int]].forEach(([c,m])=>{if(c==='mov'&&!(m>0))return;const f=fac.find(x=>x.semana===w.semana&&x.concepto===c);FR.push({semana:w.semana,conc:c,monto:m,f})})});
   const FT={emi:0,cob:0,porCobrar:0,nEmi:0,nPor:0,nSin:0,montoSin:0,nRep:FR.length};FR.forEach(r=>{if(r.f){FT.emi+=r.f.valor;FT.nEmi++;if(r.f.estado==='Cobrada')FT.cob+=r.f.valor;else{FT.porCobrar+=r.f.valor;FT.nPor++}}else{FT.nSin++;FT.montoSin+=r.monto}});
-  const kp=[
-    estKpi('Facturado real total',facM(T.tot),V?facArrow((L.tot-V.tot)/Math.abs(V.tot))+' · sem '+L.semana+' vs '+V.semana:'',`Por horas ${facM(T.fh)} · movimiento interno ${facM(T.fi)} · ${T.sem} semanas (${rows[0].semana} a ${L.semana})`,''),
-    estKpi('Cumplimiento del ingreso esperado',estPf(T.pct),EST_ETQ[eT],`Facturado ÷ ingreso esperado (${facM(T.esp)}). Semana ${L.semana}: ${estPf(L.pct)}`,eT),
-    estKpi('Fuga por horas',facM(T.fuga),'',`Facturado por horas menos el ingreso esperado. Semana ${L.semana}: ${facM(L.fuga)}`,''),
-    estKpi('Horas sin movimiento',estF(T.sinH)+' h',estPf(T.sinH/T.pos)+' de las horas posibles',`Horas que TPG no paga: ${facM(T.sinD)} no facturados`,''),
-    estKpi('Horas penalizadas',estF(T.pen)+' h',facM(T.penD)+' a mitad de tarifa',`Horas con un solo movimiento, pagadas a la mitad. Pagadas completas: ${estF(T.comp)} h`,''),
-    estKpi('Movimientos no considerados',estF(T.me),estF1(T.nocH)+' h · '+facM(T.nocD),'Movimientos sobre el máximo de 2 por hora que TPG no paga',''),
-    estKpi('$ por hora · todas las horas','$\u00a0'+estNum(T.vh,2),'',`Facturado total ÷ horas posibles (${estF(T.pos)} h). Tarifa pactada: $ ${estNum(P.tarifa,2)}`,''),
-    estKpi('$ por hora · con movimiento','$\u00a0'+estNum(T.vhc,2),'',`Facturado total ÷ horas con movimiento (${estF(T.conH)} h)`,''),
-    estKpi(`Escenario 1 · ${P.esc1.h} h × ${P.esc1.d} días`,estPf(T.p1),'Diferencia '+facM(T.tot-T.e1),`Facturado real frente a ${facM(T.e1)} si operara las 24 horas, los 7 días`,estEst(T.p1)),
-    estKpi(`Escenario 2 · ${P.esc2.h} h × ${P.esc2.d} días`,estPf(T.p2),'Diferencia '+facM(T.tot-T.e2),`Facturado real frente a ${facM(T.e2)} con 23 horas, 6 días`,estEst(T.p2)),
-    estKpi('Movimientos realizados',estF(T.movTot),estPf(T.movPct)+' de los posibles',`Posibles (2 por hora): ${estF(T.movPos)} · ${estF1(T.mud)} por unidad y día. Por horas ${estF(T.mr)} · internos ${estF(T.mi)}`,estEst(T.movPct)),
-    estKpi('Por movimiento interno',facM(T.fi),estF(T.mi)+' movimientos',`Promedio ${facM(T.mi?T.fi/T.mi:0)} por movimiento interno`,''),
-    estKpi('Facturas emitidas',facM(FT.emi),FT.nEmi+' facturas',`De ${FT.nRep} reportes con valor. Cobrado: ${facM(FT.cob)}`,''),
-    estKpi('Por cobrar',facM(FT.porCobrar),FT.nPor+' facturas',`Facturas emitidas que aún no se cobran`,FT.nPor?'warn':''),
-    estKpi('Reportes sin factura',String(FT.nSin),facM(FT.montoSin),FT.nSin?'Reportes de TPG sin factura registrada':'Todos los reportes tienen factura',FT.nSin?'bad':'ok')
-  ].join('');
+  const kp=`<h2 class="sc-sec">Resultado</h2><div class="sc-grid s2">${estSc('Facturado real total',facM(T.tot),V?facArrow((L.tot-V.tot)/Math.abs(V.tot))+' · sem '+L.semana+' vs '+V.semana:'',`Por horas ${facM(T.fh)} · movimiento interno ${facM(T.fi)} · ${T.sem} semanas (${rows[0].semana} a ${L.semana})`,'',null,'dollar')}${estSc('Cumplimiento del ingreso esperado',estPf(T.pct),EST_ETQ[eT],`Facturado ÷ ingreso esperado (${facM(T.esp)}). Semana ${L.semana}: ${estPf(L.pct)}`,eT,T.pct,'target')}${estSc('Fuga por horas',facM(T.fuga),'',`Facturado por horas menos el ingreso esperado. Semana ${L.semana}: ${facM(L.fuga)}`,'',null,'down')}${estSc('Movimientos realizados',estF(T.movTot),estPf(T.movPct)+' de los posibles',`Posibles (2 por hora): ${estF(T.movPos)} · ${estF1(T.mud)} por unidad y día. Por horas ${estF(T.mr)} · internos ${estF(T.mi)}`,estEst(T.movPct),T.movPct,'route')}</div><h2 class="sc-sec">Horas y tarifa</h2><div class="sc-grid s2">${estSc('Horas sin movimiento',estF(T.sinH)+' h',estPf(T.sinH/T.pos)+' de las horas posibles',`Horas que TPG no paga: ${facM(T.sinD)} no facturados`,'',null,'clock')}${estSc('Horas penalizadas',estF(T.pen)+' h',facM(T.penD)+' a mitad de tarifa',`Horas con un solo movimiento, pagadas a la mitad. Pagadas completas: ${estF(T.comp)} h`,'',null,'hourglass')}${estSc('Movimientos no considerados',estF(T.me),estF1(T.nocH)+' h · '+facM(T.nocD),'Movimientos sobre el máximo de 2 por hora que TPG no paga','',null,'ban')}${estSc('$ por hora · todas las horas','$\u00a0'+estNum(T.vh,2),'',`Facturado total ÷ horas posibles (${estF(T.pos)} h). Tarifa pactada: $ ${estNum(P.tarifa,2)}`,'',null,'gauge')}${estSc('$ por hora · con movimiento','$\u00a0'+estNum(T.vhc,2),'',`Facturado total ÷ horas con movimiento (${estF(T.conH)} h)`,'',null,'gauge')}${estSc('Por movimiento interno',facM(T.fi),estF(T.mi)+' movimientos',`Promedio ${facM(T.mi?T.fi/T.mi:0)} por movimiento interno`,'',null,'route')}</div><h2 class="sc-sec">Escenarios</h2><div class="sc-grid s2">${estSc(`Escenario 1 · ${P.esc1.h} h × ${P.esc1.d} días`,estPf(T.p1),'Diferencia '+facM(T.tot-T.e1),`Facturado real frente a ${facM(T.e1)} si operara las 24 horas, los 7 días`,estEst(T.p1),T.p1,'layers')}${estSc(`Escenario 2 · ${P.esc2.h} h × ${P.esc2.d} días`,estPf(T.p2),'Diferencia '+facM(T.tot-T.e2),`Facturado real frente a ${facM(T.e2)} con 23 horas, 6 días`,estEst(T.p2),T.p2,'layers')}</div><h2 class="sc-sec">Cobranza</h2><div class="sc-grid s2">${estSc('Facturas emitidas',facM(FT.emi),FT.nEmi+' facturas',`De ${FT.nRep} reportes con valor. Cobrado: ${facM(FT.cob)}`,'',null,'receipt')}${estSc('Por cobrar',facM(FT.porCobrar),FT.nPor+' facturas',`Facturas emitidas que aún no se cobran`,FT.nPor?'warn':'',null,'wallet')}${estSc('Reportes sin factura',String(FT.nSin),facM(FT.montoSin),FT.nSin?'Reportes de TPG sin factura registrada':'Todos los reportes tienen factura',FT.nSin?'bad':'ok',null,'filex')}</div>`;
   const tbl=estTbl(['Semana','Esperado','Por horas','Internos','Total','% esperado','Fuga por horas','Sin mov. (h)','$ no facturado','Penalizadas (h)','$ por hora','Esc. 1','Esc. 2'],
     W.concat([Object.assign({semana:'Total'},T)]),
     [['semana',x=>String(x)],['esp',facM],['fh',facM],['fi',facM],['tot',facM],['pct',estPf,r=>estEst(r.pct)],['fuga',facM],['sinH',estF],['sinD',facM],['pen',estF],['vh',v=>'$\u00a0'+estNum(v,2)],['p1',estPf,r=>estEst(r.p1)],['p2',estPf,r=>estEst(r.p2)]]);
@@ -1699,7 +1693,7 @@ function renderFac_(){
     <button class="btn sm" data-act="freload"${S.facBusy?' disabled':''}>Actualizar</button></div>
     <p class="est-sub">Semanas ${rows[0].semana} a ${L.semana} · ${rows[0].unidades===L.unidades?L.unidades+' unidades':'unidades según semana'} · tarifa $ ${estNum(P.tarifa,2)} por hora · ${P.horasDia} horas por día</p>
     <p class="est-nota">Ingreso esperado = unidades × días × ${P.horasDia} horas × $ ${estNum(P.tarifa,2)}. Semáforo del cumplimiento: verde 90 % o más, ámbar de 70 % a 89 %, rojo menos de 70 %. Las semanas se cargan en la hoja «Facturacion».</p></div>
-  <div class="est-kpis">${kp}</div>
+  ${kp}
   <section class="card"><h2>Facturado por semana</h2><div class="est-nota">Por horas y por movimiento interno. La línea punteada es el ingreso esperado</div>${facStack(W,[{k:'fh',n:'Por horas',c:'var(--estp)'},{k:'fi',n:'Movimiento interno',c:'var(--esto)'}],L.esp,v=>'$\u00a0'+estNum(v,0),'Ingreso esperado')}</section>
   <div class="est-g2c"><div class="est-g2">
     <section class="card"><h2>Cumplimiento del ingreso esperado</h2><div class="est-nota">Facturado total ÷ ingreso esperado, por semana</div>${facLine(W,r=>r.pct,estP0,1,'Meta 100 %')}</section>
