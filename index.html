@@ -590,6 +590,12 @@ table.est-t tr.tot td{font-weight:650;border-top:2px solid var(--line)}
  .navfil input,.navfil select{min-width:0;width:100%;padding:7px 8px;border-radius:12px;font:inherit;font-size:12.5px;color:#fff;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.2);color-scheme:dark}
  .navfil select option{color:#111;background:#fff}
  .navfil input[type=date]{font-size:11px;padding:7px 5px}
+ /* Barra de desplazamiento de la barra lateral: delgada, translúcida y del mismo estilo que el menú */
+ body.adm nav::-webkit-scrollbar{width:10px}
+ body.adm nav::-webkit-scrollbar-track{background:transparent;margin:22px 0}
+ body.adm nav::-webkit-scrollbar-thumb{background:rgba(255,255,255,.28);border-radius:99px;border:3px solid transparent;background-clip:padding-box;min-height:48px}
+ body.adm nav::-webkit-scrollbar-thumb:hover{background:rgba(243,111,33,.9);background-clip:padding-box;border:3px solid transparent}
+ @supports not selector(::-webkit-scrollbar){body.adm nav{scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.3) transparent}}
  .navfil input:disabled,.navfil select:disabled{opacity:.45}
  .navfil .btn{width:100%;justify-content:center;padding:7px 10px;border-radius:14px;color:#fff;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16);transition:transform .22s cubic-bezier(.2,.8,.2,1),background .22s}
  .navfil .btn:hover{background:rgba(255,255,255,.22);transform:scale(1.02)}
