@@ -506,6 +506,24 @@ nav .mas-sheet .salir{display:none}
 .est-fil{display:flex;flex-wrap:wrap;gap:10px 12px;align-items:flex-end}
 .est-fil label{display:grid;gap:4px;font-size:12px;color:var(--mute)}
 .est-fil input,.est-fil select{min-width:9rem}
+:is(#estBox,#facBox) .sc-sec{margin:18px 0 8px;font-size:12px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--mute)}
+:is(#estBox,#facBox) .sc-grid{display:grid;gap:12px;margin-bottom:16px;grid-template-columns:repeat(auto-fit,minmax(215px,1fr))}
+:is(#estBox,#facBox) .sc-grid.s2{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+:is(#estBox,#facBox) .sc{position:relative;overflow:hidden;min-width:0;display:flex;flex-direction:column;gap:9px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 14px 14px;box-shadow:0 1px 2px rgba(8,43,92,.06),0 10px 26px -14px rgba(8,43,92,.22);--sc:var(--esto);--scbg:var(--orangesoft)}
+:is(#estBox,#facBox) .sc.ok{--sc:var(--ok);--scbg:var(--okbg)}:is(#estBox,#facBox) .sc.warn{--sc:var(--warn);--scbg:var(--warnbg)}:is(#estBox,#facBox) .sc.bad{--sc:var(--bad);--scbg:var(--badbg)}
+:is(#estBox,#facBox) .sc-bar{position:absolute;left:0;right:0;top:0;height:4px;background:var(--sc)}
+:is(#estBox,#facBox) .sc-h{display:flex;align-items:center;gap:9px}
+:is(#estBox,#facBox) .sc-i{flex:none;display:grid;place-items:center;width:34px;height:34px;border-radius:11px;background:var(--scbg);color:var(--sc)}
+:is(#estBox,#facBox) .sc-i svg{width:18px;height:18px}
+:is(#estBox,#facBox) .sc h3{margin:0;font-size:13px;font-weight:700;line-height:1.2;color:var(--mute);min-width:0}
+:is(#estBox,#facBox) .sc-v{font-size:32px;font-weight:800;line-height:1;letter-spacing:-.02em;color:var(--estp);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+:is(#estBox,#facBox) .sc-p{height:8px;border-radius:99px;background:var(--seg);overflow:hidden}
+:is(#estBox,#facBox) .sc-p i{display:block;height:100%;border-radius:99px;background:var(--sc);transition:width .7s}
+:is(#estBox,#facBox) .sc-t{display:block;width:fit-content;max-width:100%;font-size:12px;font-weight:800;padding:2px 10px;border-radius:99px;background:var(--scbg);color:var(--sc)}
+:is(#estBox,#facBox) .sc-n{font-size:12px;line-height:1.35;color:var(--mute);margin-top:auto}
+@media(max-width:700px){:is(#estBox,#facBox) .sc-grid,:is(#estBox,#facBox) .sc-grid.s2{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}:is(#estBox,#facBox) .sc-v{font-size:26px}:is(#estBox,#facBox) .sc{padding:14px 12px 12px}:is(#estBox,#facBox) .sc-n{font-size:11.5px}}
+#facBox .sc-v{font-size:clamp(20px,2.1vw,28px)}
+@media(max-width:700px){#facBox .sc-v{font-size:21px}}
 .est-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-bottom:16px}
 .est-k{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--esto);border-radius:16px;padding:14px 16px;min-width:0;font-size:13.5px;box-shadow:0 1px 2px rgba(8,43,92,.06),0 8px 22px rgba(8,43,92,.06)}
 .est-k>div:first-child{font-weight:600}
@@ -1337,6 +1355,30 @@ function estTbl(head,rows,cols,opt){
     rows.length?rows.map(r=>`<tr>${cols.map(([k,fm,tone])=>{const t=tone&&tone(r);return`<td${t?` class="est-${t}"`:''}>${esc(fm(r[k]))}</td>`}).join('')}</tr>`).join(''):`<tr><td colspan="${head.length}" class="empty" style="text-align:center">Sin datos con estos filtros</td></tr>`}</tbody></table></div>`;
 }
 const estKpi=(t,v,tag,nota,e)=>`<div class="est-k${e?' '+e:''}"><div>${t}</div><b>${v}</b><span class="tag">${tag||''}</span><div class="nota">${nota}</div></div>`;
+/* Tarjetas de la pestaña Estadísticas (diseño de Lovable "Stat Card Studio"): franja de color, ícono, número grande, barra de avance y etiqueta de semáforo */
+const SC_IC={
+  dollar:'<circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 18V6"/>',
+  down:'<polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/>',
+  clock:'<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
+  ban:'<circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/>',
+  receipt:'<path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 17.5v-11"/>',
+  wallet:'<path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/>',
+  filex:'<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="m14.5 12.5-5 5"/><path d="m9.5 12.5 5 5"/>',
+  layers:'<path d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/><path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"/><path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"/>',
+  gauge:'<path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/>',
+  target:'<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>',
+  truck:'<path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/>',
+  cycle:'<path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/>',
+  route:'<circle cx="6" cy="19" r="3"/><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"/><circle cx="18" cy="5" r="3"/>',
+  timer:'<line x1="10" x2="14" y1="2" y2="2"/><line x1="12" x2="15" y1="14" y2="11"/><circle cx="12" cy="14" r="8"/>',
+  alert:'<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/>',
+  pause:'<circle cx="12" cy="12" r="10"/><line x1="10" x2="10" y1="15" y2="9"/><line x1="14" x2="14" y1="15" y2="9"/>',
+  hourglass:'<path d="M5 22h14"/><path d="M5 2h14"/><path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22"/><path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2"/>'
+};
+const estSc=(t,v,tag,nota,e,prog,ic)=>{
+  const pr=(prog==null||!isFinite(prog))?null:Math.max(0,Math.min(1,prog));
+  return `<div class="sc${e?' '+e:''}"><span class="sc-bar"></span><div class="sc-h"><span class="sc-i"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${SC_IC[ic]||''}</svg></span><h3>${t}</h3></div><div class="sc-v">${v}</div>${pr==null?'':`<div class="sc-p"><i style="width:${Math.round(pr*100)}%"></i></div>`}${tag?`<span class="sc-t">${tag}</span>`:''}<div class="sc-n">${nota}</div></div>`;
+};
 const estSelect=(f,todas,vals,cur,dis)=>`<select data-f="${f}"${dis?' disabled':''}><option value="">${todas}</option>${vals.map(v=>{const[val,txt]=Array.isArray(v)?v:[v,v];return`<option value="${esc(val)}"${val===cur?' selected':''}>${esc(txt)}</option>`}).join('')}</select>`;
 
 /* ---------- carga y dibujo de la sección ---------- */
@@ -1504,16 +1546,20 @@ function renderEst_(){
   ${S.est.aviso?`<div class="banner" style="margin-bottom:16px">${esc(S.est.aviso)}</div>`:''}
   <div class="card est-fil">
 ${filInner}  </div>
-  <div class="est-kpis">
-    ${estKpi('Viajes por hora',vph==null?'—':estF2(vph),est?EST_ETQ[est]+' · '+estPf(vph/EST_VPH)+' de la meta':'',vivo?'Por unidad, desde el inicio del turno. Meta: 2':'Por unidad, en turnos completos de 11 horas. Meta: 2',est)}
-    ${estKpi('Faltan para la meta',vt==null?'—':estF1(Math.max(0,EST_TURNO-vt)),est?EST_ETQ[est]+' · '+estPf(vph/EST_VPH)+' de la meta':'',nota,est)}
-    ${estKpi('Promedio de viajes por turno',vt==null?'—':estF1(vt),eP?TAGP[eP]:'',vt==null?'Por unidad y turno. Mínimo: 18':vivo?'Viajes por unidad hasta ahora. A esta hora el mínimo sería '+estF1(base)+' (18 al cierre)':'Por unidad en turnos completos. Mínimo: 18 ('+(vt>=EST_MIN?'sobra '+estF1(vt-EST_MIN):'faltan '+estF1(EST_MIN-vt))+')',eP)}
-    ${estKpi('Viajes',estF(sel.length),'','Movimientos registrados con los filtros actuales','')}
-    ${estKpi('Ciclo por viaje',cic?estMin(cic):'—',eC?EST_ETQ[eC]+' · '+estPf(EST_CICLO/cic)+' de la meta':'','Mediana del tiempo entre el inicio de un viaje y el inicio del siguiente de la misma unidad, sin paradas ni relevos en medio. Meta: 30 min',eC)}
-    ${estKpi('Duración del viaje',estMin(estDmed(sel)),'','Mediana, de inicio de carga a fin de descarga','')}
-    ${estKpi('Con demora',sel.length?estPf(estPdem(sel)):'—','','Viajes con demora de grúa, de máquina, espera en fila, demora en descarga o en el muelle','')}
-    ${estKpi('Tiempo parado',estHm(parTot),'',estF(parSel.length)+' paradas de la unidad por causa nuestra',parTot?'warn':'')}
-    ${estKpi('Horas perdidas por el terminal',estHm(ptTot),'',ptCic.length?estF(ptExc.length)+' de '+estF(ptCic.length)+' ciclos pasaron de 30 min':'Aún no hay ciclos medidos',ptTot?'warn':'')}
+  <h2 class="sc-sec">Cumplimiento de meta</h2>
+  <div class="sc-grid">
+    ${estSc('Viajes por hora',vph==null?'—':estF2(vph),est?EST_ETQ[est]+' · '+estPf(vph/EST_VPH)+' de la meta':'',vivo?'Por unidad, desde el inicio del turno. Meta: 2':'Por unidad, en turnos completos de 11 horas. Meta: 2',est,vph==null?null:vph/EST_VPH,'gauge')}
+    ${estSc('Faltan para la meta',vt==null?'—':estF1(Math.max(0,EST_TURNO-vt)),est?EST_ETQ[est]+' · '+estPf(vph/EST_VPH)+' de la meta':'',nota,est,vph==null?null:vph/EST_VPH,'target')}
+    ${estSc('Promedio por turno',vt==null?'—':estF1(vt),eP?TAGP[eP]:'',vt==null?'Por unidad y turno. Mínimo: 18':vivo?'Viajes por unidad hasta ahora. A esta hora el mínimo sería '+estF1(base)+' (18 al cierre)':'Por unidad en turnos completos. Mínimo: 18 ('+(vt>=EST_MIN?'sobra '+estF1(vt-EST_MIN):'faltan '+estF1(EST_MIN-vt))+')',eP,vt==null?null:vt/(vivo?base:EST_MIN),'truck')}
+    ${estSc('Ciclo por viaje',cic?estMin(cic):'—',eC?EST_ETQ[eC]+' · '+estPf(EST_CICLO/cic)+' de la meta':'','Mediana del tiempo entre el inicio de un viaje y el inicio del siguiente de la misma unidad, sin paradas ni relevos en medio. Meta: 30 min',eC,cic?EST_CICLO/cic:null,'cycle')}
+  </div>
+  <h2 class="sc-sec">Operación</h2>
+  <div class="sc-grid s2">
+    ${estSc('Viajes',estF(sel.length),'','Movimientos registrados con los filtros actuales','',null,'route')}
+    ${estSc('Duración del viaje',estMin(estDmed(sel)),'','Mediana, de inicio de carga a fin de descarga','',null,'timer')}
+    ${estSc('Con demora',sel.length?estPf(estPdem(sel)):'—','','Viajes con demora de grúa, de máquina, espera en fila, demora en descarga o en el muelle','',null,'alert')}
+    ${estSc('Tiempo parado',estHm(parTot),'',estF(parSel.length)+' paradas de la unidad por causa nuestra',parTot?'warn':'',null,'pause')}
+    ${estSc('Horas perdidas (terminal)',estHm(ptTot),'',ptCic.length?estF(ptExc.length)+' de '+estF(ptCic.length)+' ciclos pasaron de 30 min':'Aún no hay ciclos medidos',ptTot?'warn':'',null,'hourglass')}
   </div>
   <section class="card"><h2>${hTit}</h2><div class="est-nota">${hNota}</div>${chart}</section>
   ${vivo?'':`<section class="card"><h2>${hist?'Tendencia mensual':'Tendencia semanal'}</h2><div class="est-nota">${hist?'Mes a mes. Respeta los filtros de placa, chofer y turno. El último punto, hueco, es el mes en curso':'Semana a semana. Respeta los filtros de placa, chofer y turno. El último punto, hueco, es la semana en curso o incompleta'}</div>
@@ -1637,23 +1683,7 @@ function renderFac_(){
   const T=facAgg(rows,P),W=rows.map(r=>Object.assign({semana:r.semana},facAgg([r],P))),L=W[W.length-1],V=W.length>1?W[W.length-2]:null,eT=estEst(T.pct);
   const FR=[];rows.forEach(w=>{[['horas',w.fact_horas],['mov',w.fact_int]].forEach(([c,m])=>{if(c==='mov'&&!(m>0))return;const f=fac.find(x=>x.semana===w.semana&&x.concepto===c);FR.push({semana:w.semana,conc:c,monto:m,f})})});
   const FT={emi:0,cob:0,porCobrar:0,nEmi:0,nPor:0,nSin:0,montoSin:0,nRep:FR.length};FR.forEach(r=>{if(r.f){FT.emi+=r.f.valor;FT.nEmi++;if(r.f.estado==='Cobrada')FT.cob+=r.f.valor;else{FT.porCobrar+=r.f.valor;FT.nPor++}}else{FT.nSin++;FT.montoSin+=r.monto}});
-  const kp=[
-    estKpi('Facturado real total',facM(T.tot),V?facArrow((L.tot-V.tot)/Math.abs(V.tot))+' · sem '+L.semana+' vs '+V.semana:'',`Por horas ${facM(T.fh)} · movimiento interno ${facM(T.fi)} · ${T.sem} semanas (${rows[0].semana} a ${L.semana})`,''),
-    estKpi('Cumplimiento del ingreso esperado',estPf(T.pct),EST_ETQ[eT],`Facturado ÷ ingreso esperado (${facM(T.esp)}). Semana ${L.semana}: ${estPf(L.pct)}`,eT),
-    estKpi('Fuga por horas',facM(T.fuga),'',`Facturado por horas menos el ingreso esperado. Semana ${L.semana}: ${facM(L.fuga)}`,''),
-    estKpi('Horas sin movimiento',estF(T.sinH)+' h',estPf(T.sinH/T.pos)+' de las horas posibles',`Horas que TPG no paga: ${facM(T.sinD)} no facturados`,''),
-    estKpi('Horas penalizadas',estF(T.pen)+' h',facM(T.penD)+' a mitad de tarifa',`Horas con un solo movimiento, pagadas a la mitad. Pagadas completas: ${estF(T.comp)} h`,''),
-    estKpi('Movimientos no considerados',estF(T.me),estF1(T.nocH)+' h · '+facM(T.nocD),'Movimientos sobre el máximo de 2 por hora que TPG no paga',''),
-    estKpi('$ por hora · todas las horas','$\u00a0'+estNum(T.vh,2),'',`Facturado total ÷ horas posibles (${estF(T.pos)} h). Tarifa pactada: $ ${estNum(P.tarifa,2)}`,''),
-    estKpi('$ por hora · con movimiento','$\u00a0'+estNum(T.vhc,2),'',`Facturado total ÷ horas con movimiento (${estF(T.conH)} h)`,''),
-    estKpi(`Escenario 1 · ${P.esc1.h} h × ${P.esc1.d} días`,estPf(T.p1),'Diferencia '+facM(T.tot-T.e1),`Facturado real frente a ${facM(T.e1)} si operara las 24 horas, los 7 días`,estEst(T.p1)),
-    estKpi(`Escenario 2 · ${P.esc2.h} h × ${P.esc2.d} días`,estPf(T.p2),'Diferencia '+facM(T.tot-T.e2),`Facturado real frente a ${facM(T.e2)} con 23 horas, 6 días`,estEst(T.p2)),
-    estKpi('Movimientos realizados',estF(T.movTot),estPf(T.movPct)+' de los posibles',`Posibles (2 por hora): ${estF(T.movPos)} · ${estF1(T.mud)} por unidad y día. Por horas ${estF(T.mr)} · internos ${estF(T.mi)}`,estEst(T.movPct)),
-    estKpi('Por movimiento interno',facM(T.fi),estF(T.mi)+' movimientos',`Promedio ${facM(T.mi?T.fi/T.mi:0)} por movimiento interno`,''),
-    estKpi('Facturas emitidas',facM(FT.emi),FT.nEmi+' facturas',`De ${FT.nRep} reportes con valor. Cobrado: ${facM(FT.cob)}`,''),
-    estKpi('Por cobrar',facM(FT.porCobrar),FT.nPor+' facturas',`Facturas emitidas que aún no se cobran`,FT.nPor?'warn':''),
-    estKpi('Reportes sin factura',String(FT.nSin),facM(FT.montoSin),FT.nSin?'Reportes de TPG sin factura registrada':'Todos los reportes tienen factura',FT.nSin?'bad':'ok')
-  ].join('');
+  const kp=`<h2 class="sc-sec">Resultado</h2><div class="sc-grid s2">${estSc('Facturado real total',facM(T.tot),V?facArrow((L.tot-V.tot)/Math.abs(V.tot))+' · sem '+L.semana+' vs '+V.semana:'',`Por horas ${facM(T.fh)} · movimiento interno ${facM(T.fi)} · ${T.sem} semanas (${rows[0].semana} a ${L.semana})`,'',null,'dollar')}${estSc('Cumplimiento del ingreso esperado',estPf(T.pct),EST_ETQ[eT],`Facturado ÷ ingreso esperado (${facM(T.esp)}). Semana ${L.semana}: ${estPf(L.pct)}`,eT,T.pct,'target')}${estSc('Fuga por horas',facM(T.fuga),'',`Facturado por horas menos el ingreso esperado. Semana ${L.semana}: ${facM(L.fuga)}`,'',null,'down')}${estSc('Movimientos realizados',estF(T.movTot),estPf(T.movPct)+' de los posibles',`Posibles (2 por hora): ${estF(T.movPos)} · ${estF1(T.mud)} por unidad y día. Por horas ${estF(T.mr)} · internos ${estF(T.mi)}`,estEst(T.movPct),T.movPct,'route')}</div><h2 class="sc-sec">Horas y tarifa</h2><div class="sc-grid s2">${estSc('Horas sin movimiento',estF(T.sinH)+' h',estPf(T.sinH/T.pos)+' de las horas posibles',`Horas que TPG no paga: ${facM(T.sinD)} no facturados`,'',null,'clock')}${estSc('Horas penalizadas',estF(T.pen)+' h',facM(T.penD)+' a mitad de tarifa',`Horas con un solo movimiento, pagadas a la mitad. Pagadas completas: ${estF(T.comp)} h`,'',null,'hourglass')}${estSc('Movimientos no considerados',estF(T.me),estF1(T.nocH)+' h · '+facM(T.nocD),'Movimientos sobre el máximo de 2 por hora que TPG no paga','',null,'ban')}${estSc('$ por hora · todas las horas','$\u00a0'+estNum(T.vh,2),'',`Facturado total ÷ horas posibles (${estF(T.pos)} h). Tarifa pactada: $ ${estNum(P.tarifa,2)}`,'',null,'gauge')}${estSc('$ por hora · con movimiento','$\u00a0'+estNum(T.vhc,2),'',`Facturado total ÷ horas con movimiento (${estF(T.conH)} h)`,'',null,'gauge')}${estSc('Por movimiento interno',facM(T.fi),estF(T.mi)+' movimientos',`Promedio ${facM(T.mi?T.fi/T.mi:0)} por movimiento interno`,'',null,'route')}</div><h2 class="sc-sec">Escenarios</h2><div class="sc-grid s2">${estSc(`Escenario 1 · ${P.esc1.h} h × ${P.esc1.d} días`,estPf(T.p1),'Diferencia '+facM(T.tot-T.e1),`Facturado real frente a ${facM(T.e1)} si operara las 24 horas, los 7 días`,estEst(T.p1),T.p1,'layers')}${estSc(`Escenario 2 · ${P.esc2.h} h × ${P.esc2.d} días`,estPf(T.p2),'Diferencia '+facM(T.tot-T.e2),`Facturado real frente a ${facM(T.e2)} con 23 horas, 6 días`,estEst(T.p2),T.p2,'layers')}</div><h2 class="sc-sec">Cobranza</h2><div class="sc-grid s2">${estSc('Facturas emitidas',facM(FT.emi),FT.nEmi+' facturas',`De ${FT.nRep} reportes con valor. Cobrado: ${facM(FT.cob)}`,'',null,'receipt')}${estSc('Por cobrar',facM(FT.porCobrar),FT.nPor+' facturas',`Facturas emitidas que aún no se cobran`,FT.nPor?'warn':'',null,'wallet')}${estSc('Reportes sin factura',String(FT.nSin),facM(FT.montoSin),FT.nSin?'Reportes de TPG sin factura registrada':'Todos los reportes tienen factura',FT.nSin?'bad':'ok',null,'filex')}</div>`;
   const tbl=estTbl(['Semana','Esperado','Por horas','Internos','Total','% esperado','Fuga por horas','Sin mov. (h)','$ no facturado','Penalizadas (h)','$ por hora','Esc. 1','Esc. 2'],
     W.concat([Object.assign({semana:'Total'},T)]),
     [['semana',x=>String(x)],['esp',facM],['fh',facM],['fi',facM],['tot',facM],['pct',estPf,r=>estEst(r.pct)],['fuga',facM],['sinH',estF],['sinD',facM],['pen',estF],['vh',v=>'$\u00a0'+estNum(v,2)],['p1',estPf,r=>estEst(r.p1)],['p2',estPf,r=>estEst(r.p2)]]);
@@ -1663,7 +1693,7 @@ function renderFac_(){
     <button class="btn sm" data-act="freload"${S.facBusy?' disabled':''}>Actualizar</button></div>
     <p class="est-sub">Semanas ${rows[0].semana} a ${L.semana} · ${rows[0].unidades===L.unidades?L.unidades+' unidades':'unidades según semana'} · tarifa $ ${estNum(P.tarifa,2)} por hora · ${P.horasDia} horas por día</p>
     <p class="est-nota">Ingreso esperado = unidades × días × ${P.horasDia} horas × $ ${estNum(P.tarifa,2)}. Semáforo del cumplimiento: verde 90 % o más, ámbar de 70 % a 89 %, rojo menos de 70 %. Las semanas se cargan en la hoja «Facturacion».</p></div>
-  <div class="est-kpis">${kp}</div>
+  ${kp}
   <section class="card"><h2>Facturado por semana</h2><div class="est-nota">Por horas y por movimiento interno. La línea punteada es el ingreso esperado</div>${facStack(W,[{k:'fh',n:'Por horas',c:'var(--estp)'},{k:'fi',n:'Movimiento interno',c:'var(--esto)'}],L.esp,v=>'$\u00a0'+estNum(v,0),'Ingreso esperado')}</section>
   <div class="est-g2c"><div class="est-g2">
     <section class="card"><h2>Cumplimiento del ingreso esperado</h2><div class="est-nota">Facturado total ÷ ingreso esperado, por semana</div>${facLine(W,r=>r.pct,estP0,1,'Meta 100 %')}</section>
