@@ -2269,11 +2269,40 @@ function renderHist(){
   if(!rows.length){box.innerHTML='<div class="empty">Aún no hay viajes finalizados.</div>';return}
   const fin=rows.filter(v=>v.estado==='finalizado');
   const avg=METRICAS.map(m=>{const d=fin.map(v=>dur(v,m)).filter(x=>x!=null);return d.length?d.reduce((a,b)=>a+b,0)/d.length:null});
-  box.innerHTML=`<table><thead><tr><th>Fecha</th><th>Proyecto</th><th>Turno</th><th>Chofer</th><th>Placa</th><th>Ruta</th><th>Contenedor</th><th>Observaciones</th><th>Estado</th>${METRICAS.map(m=>`<th>${m.k}</th>`).join('')}<th>Incidencias</th></tr></thead><tbody>
-  <tr class="avg"><td colspan="9">Promedio (${fin.length} finalizados)</td>${avg.map(a=>`<td class="mono">${fdur(a)}</td>`).join('')}<td></td></tr>`+
+  box.innerHTML=`<table><thead><tr><th>Fecha</th><th>Proyecto</th><th>Turno</th><th>Chofer</th><th>Placa</th><th>Ruta</th><th>Contenedor</th><th>Observaciones</th><th>Estado</th>${METRICAS.map(m=>`<th>${m.k}</th>`).join('')}<th>Incidencias</th>${S.rol==='admin'?'<th></th>':''}</tr></thead><tbody>
+  <tr class="avg"><td colspan="9">Promedio (${fin.length} finalizados)</td>${avg.map(a=>`<td class="mono">${fdur(a)}</td>`).join('')}<td></td>${S.rol==='admin'?'<td></td>':''}</tr>`+
   rows.map(v=>`<tr><td class="mono">${fecha(v.creado)}</td><td>${pj(v.proyecto)}</td><td>${esc(v.turno)||'—'}</td><td>${esc(v.chofer)}</td><td><b>${esc(v.placa)}</b></td>
   <td>${(v.origen||v.destino)?esc(v.origen)+' → '+esc(v.destino):'—'}</td><td class="mono">${v.contenedor?esc(v.contenedor)+' · '+esc(v.medida):'—'}</td><td>${esc(v.observaciones)||'—'}</td>
-  <td><span class="b ${v.estado==='finalizado'?'free':'off'}">${v.estado==='finalizado'?'Finalizado':'Liberado'}</span></td>${METRICAS.map(m=>`<td class="mono">${fdur(dur(v,m))}</td>`).join('')}<td class="mono">${incViaje(v)||'—'}</td></tr>`).join('')+`</tbody></table>`;
+  <td><span class="b ${v.estado==='finalizado'?'free':'off'}">${v.estado==='finalizado'?'Finalizado':'Liberado'}</span></td>${METRICAS.map(m=>`<td class="mono">${fdur(dur(v,m))}</td>`).join('')}<td class="mono">${incViaje(v)||'—'}</td>${S.rol==='admin'?`<td><button class="btn sm" data-hed="${esc(v.id)}">Editar</button></td>`:''}</tr>`).join('')+`</tbody></table>`;
+}
+/* Editar un viaje (solo administrador): reemplaza corregir la hoja a mano. Queda en la auditoría. */
+const fEc=ms=>{if(!ms)return'';const p=Object.fromEntries(new Intl.DateTimeFormat('es-EC',{timeZone:'America/Guayaquil',day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit',hour12:false}).formatToParts(new Date(ms)).map(x=>[x.type,x.value]));return`${p.day}/${p.month}/${p.year} ${p.hour==='24'?'00':p.hour}:${p.minute}`};
+const pEc=t=>{t=String(t||'').trim();if(!t)return 0;const m=t.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})\s+(\d{1,2}):(\d{2})$/);if(!m)return NaN;const ms=Date.parse(`${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}T${m[4].padStart(2,'0')}:${m[5]}:00-05:00`);return isNaN(ms)?NaN:ms};
+async function editarViaje(id){
+  const v=(S.A.viajes||[]).find(x=>x.id===id);if(!v){toast('No encontré ese viaje. Actualiza la pantalla.');return}
+  const lug=(B.lugares&&B.lugares[v.proyecto])||[],opL=x=>[['','—'],...[...new Set([...lug,x].filter(Boolean))].map(l=>[l,l])];
+  const pl=S.A.placas.filter(p=>p.habilitada||p.id===v.placa_id).sort((a,b)=>a.placa.localeCompare(b.placa)).map(p=>[p.id,p.placa]);
+  if(!pl.some(x=>x[0]===v.placa_id))pl.unshift([v.placa_id||'',v.placa||'—']);
+  const ch=S.A.choferes.filter(c=>c.habilitada||c.id===v.chofer_id).sort((a,b)=>a.nombre.localeCompare(b.nombre)).map(c=>[c.id,c.nombre]);
+  if(!ch.some(x=>x[0]===v.chofer_id))ch.unshift([v.chofer_id||'',v.chofer||'—']);
+  const med=[['','—'],...[...new Set([...(B.medidas||[]),v.medida].filter(Boolean))].map(m=>[m,m])];
+  const pasos=['1 · Llegada a carga','2 · Cargando','3 · Salida de carga','4 · Llegada a descarga','5 · Ingreso a descarga','6 · Salida de descarga'];
+  const campos=[{k:'turno',label:'Turno',tipo:'select',opts:(B.turnos||['Diurno','Nocturno']).map(t=>[t,t]),val:v.turno},
+    {k:'placa_id',label:'Placa',tipo:'select',opts:pl,val:v.placa_id},{k:'chofer_id',label:'Chofer',tipo:'select',opts:ch,val:v.chofer_id},
+    {k:'origen',label:'Origen',tipo:'select',opts:opL(v.origen),val:v.origen||''},{k:'destino',label:'Destino',tipo:'select',opts:opL(v.destino),val:v.destino||''},
+    {k:'contenedor',label:'Contenedor',val:v.contenedor||'',ph:'MSKU1234567'},{k:'medida',label:'Medida',tipo:'select',opts:med,val:v.medida||''},
+    ...pasos.map((t,i)=>({k:'t'+(i+1),label:'Hora '+t+' (dd/mm/aaaa hh:mm)',val:fEc(v['t'+(i+1)]),ph:'dd/mm/aaaa hh:mm'}))];
+  const r=await dlg({icono:'info',titulo:'Editar viaje',sub:`${v.placa} · ${v.chofer} · ${fecha(v.creado)}`,texto:'Cambia solo lo que esté mal. El cambio queda en la auditoría con tu nombre.',si:'Guardar cambios',campos});
+  if(!r)return;
+  const o={};
+  ['turno','placa_id','chofer_id','origen','destino','medida'].forEach(k=>{if(String(r[k]||'')!==String(v[k]||''))o[k]=r[k]});
+  if(normC(r.contenedor)!==normC(v.contenedor||''))o.contenedor=normC(r.contenedor);
+  for(let i=1;i<=6;i++){const t=pEc(r['t'+i]);if(isNaN(t)){toast('La hora del paso '+i+' debe ser dd/mm/aaaa hh:mm');return}if(fEc(t)!==fEc(v['t'+i]))o['t'+i]=t}
+  if(!Object.keys(o).length){toast('No cambiaste nada');return}
+  try{S.busy=true;const res=await run('api_viajeEditar',S.pin,id,o);
+    toast('Viaje actualizado'+(res&&res.puente==='OK'?'. Si ya estaba en el dashboard, corrígelo también en la hoja del formulario':''));
+  }catch(e){toast(String(e&&e.message?e.message:e))}finally{S.busy=false}
+  await loadAdmin(true);
 }
 function csv(){
   const rows=histRows(),head=['Fecha','Proyecto','Turno','Placa','Chofer','Operacion','Origen','Destino','Contenedor','Medida','Observaciones','Estado','Auto','t1_llegada_carga','t2_cargando','t3_salida_carga','t4_llegada_descarga','t5_ingreso_descarga','t6_salida_descarga',...METRICAS.map(m=>m.k+' (min)'),'Incidencias'];
@@ -2809,6 +2838,7 @@ $('#fFecha').addEventListener('change',e=>{let v=e.target.value||'';const m=e.ta
 $('#fFechaX').addEventListener('click',()=>{S.fFecha='';renderOps()});
 $('#hProy').addEventListener('change',e=>{S.hProy=e.target.value;renderHist()});
 $('#qHist').addEventListener('input',()=>renderHist());
+$('#tbHist').addEventListener('click',e=>{const b=e.target.closest('[data-hed]');if(b)editarViaje(b.dataset.hed)});
 for(const n of['placas','choferes']){
   $('#add-'+n).addEventListener('submit',e=>catalogAdd(n,e));
   $('#tb-'+n).addEventListener('change',e=>catalogEdit(n,e));

@@ -1307,6 +1307,78 @@ begin
   return 'true';
 end $$;
 
+create or replace function f_viaje_editar(p_id text, o jsonb) returns jsonb language plpgsql as $$
+declare v viajes; n viajes; p placas; c choferes; cambios text[] := '{}'; k text; i int; tt timestamptz[];
+begin
+  select * into v from viajes where id = p_id for update;
+  if v.id is null then perform e('No encontré ese viaje. Actualiza la pantalla.'); end if;
+  if v.estado = 'anulado' then perform e('Ese viaje está anulado: no se puede editar.'); end if;
+  n := v;
+  if o ? 'turno' then
+    n.turno := trim(o ->> 'turno');
+    if not (n.turno = any (cfg_list('turnos'))) then perform e('Elige el turno de la lista.'); end if;
+  end if;
+  if o ? 'placa_id' and coalesce(o ->> 'placa_id', '') <> coalesce(v.placa_id, '') then
+    select * into p from placas where id = o ->> 'placa_id';
+    if p.id is null then perform e('Elige la placa de la lista.'); end if;
+    n.placa_id := p.id; n.placa := trim(p.placa);
+  end if;
+  if o ? 'chofer_id' and coalesce(o ->> 'chofer_id', '') <> coalesce(v.chofer_id, '') then
+    select * into c from choferes where id = o ->> 'chofer_id';
+    if c.id is null then perform e('Elige el chofer de la lista.'); end if;
+    n.chofer_id := c.id; n.chofer := trim(c.nombre);
+  end if;
+  if o ? 'origen' then n.origen := upper(lugar(o ->> 'origen')); end if;
+  if o ? 'destino' then n.destino := upper(lugar(o ->> 'destino')); end if;
+  perform check_ruta(n.proyecto, n.origen, n.destino);
+  if o ? 'contenedor' then
+    n.contenedor := norm(o ->> 'contenedor');
+    if n.contenedor <> '' and n.contenedor !~ '^[A-Z]{4}[0-9]{7}$' then
+      perform e('El contenedor debe tener 4 letras y 7 números, por ejemplo MSKU1234567.'); end if;
+  end if;
+  if o ? 'medida' then
+    n.medida := trim(o ->> 'medida');
+    if n.medida <> '' and not (n.medida = any (cfg_list('medidas'))) then perform e('Elige la medida de la lista.'); end if;
+  end if;
+  if o ? 'observaciones' then n.observaciones := left(trim(coalesce(o ->> 'observaciones', '')), 500); end if;
+  for i in 1..6 loop
+    if o ? ('t' || i) then
+      case i when 1 then n.t1 := de_ms(o -> 't1'); when 2 then n.t2 := de_ms(o -> 't2'); when 3 then n.t3 := de_ms(o -> 't3');
+             when 4 then n.t4 := de_ms(o -> 't4'); when 5 then n.t5 := de_ms(o -> 't5'); else n.t6 := de_ms(o -> 't6'); end case;
+    end if;
+  end loop;
+  tt := array[n.t1, n.t2, n.t3, n.t4, n.t5, n.t6];
+  for i in 2..6 loop
+    if tt[i] is not null and tt[i-1] is null then perform e('Falta la hora del paso ' || (i-1) || '.'); end if;
+    if tt[i] is not null and tt[i] < tt[i-1] then perform e('La hora del paso ' || i || ' es anterior a la del paso ' || (i-1) || '.'); end if;
+  end loop;
+  if v.estado = 'finalizado' and n.t6 is null then perform e('Un viaje finalizado necesita la hora del paso 6.'); end if;
+  if n.t6 is not null and n.t6 > now() + interval '5 minutes' then perform e('La hora del paso 6 está en el futuro.'); end if;
+
+  if n.turno is distinct from v.turno then cambios := cambios || ('turno ' || v.turno || ' → ' || n.turno); end if;
+  if n.placa is distinct from v.placa then cambios := cambios || ('placa ' || v.placa || ' → ' || n.placa); end if;
+  if n.chofer is distinct from v.chofer then cambios := cambios || ('chofer ' || v.chofer || ' → ' || n.chofer); end if;
+  if n.origen is distinct from v.origen then cambios := cambios || ('origen ' || coalesce(nullif(v.origen, ''), '(vacío)') || ' → ' || coalesce(nullif(n.origen, ''), '(vacío)')); end if;
+  if n.destino is distinct from v.destino then cambios := cambios || ('destino ' || coalesce(nullif(v.destino, ''), '(vacío)') || ' → ' || coalesce(nullif(n.destino, ''), '(vacío)')); end if;
+  if n.contenedor is distinct from v.contenedor then cambios := cambios || ('contenedor ' || coalesce(nullif(v.contenedor, ''), '(vacío)') || ' → ' || coalesce(nullif(n.contenedor, ''), '(vacío)')); end if;
+  if n.medida is distinct from v.medida then cambios := cambios || ('medida ' || coalesce(nullif(v.medida, ''), '(vacío)') || ' → ' || coalesce(nullif(n.medida, ''), '(vacío)')); end if;
+  if n.observaciones is distinct from v.observaciones then cambios := cambios || 'observaciones'::text; end if;
+  for i in 1..6 loop
+    if (array[v.t1, v.t2, v.t3, v.t4, v.t5, v.t6])[i] is distinct from tt[i] then
+      cambios := cambios || ('hora paso ' || i || ' ' || coalesce(to_char((array[v.t1, v.t2, v.t3, v.t4, v.t5, v.t6])[i] at time zone 'America/Guayaquil', 'DD/MM HH24:MI'), '(vacía)')
+                             || ' → ' || coalesce(to_char(tt[i] at time zone 'America/Guayaquil', 'DD/MM HH24:MI'), '(vacía)'));
+    end if;
+  end loop;
+  if array_length(cambios, 1) is null then perform e('No cambiaste nada.'); end if;
+
+  update viajes set turno = n.turno, placa_id = n.placa_id, placa = n.placa, chofer_id = n.chofer_id, chofer = n.chofer,
+         origen = n.origen, destino = n.destino, contenedor = n.contenedor, medida = n.medida, observaciones = n.observaciones,
+         t1 = n.t1, t2 = n.t2, t3 = n.t3, t4 = n.t4, t5 = n.t5, t6 = n.t6
+   where id = v.id;
+  perform audit('viaje_editar', 'Editó el viaje de ' || v.placa || ' · ' || v.chofer || ' · ' || iso(coalesce(v.t6, v.creado)) || ': ' || array_to_string(cambios, ' · '));
+  return jsonb_build_object('cambios', to_jsonb(cambios), 'puente', v.puente);
+end $$;
+
 -- ---------------------------------------------------------------------
 -- 8. Entrada única: api(fn, args)
 -- ---------------------------------------------------------------------
@@ -1443,6 +1515,7 @@ begin
     perform audit('viaje_contenedor', 'Corrigió el contenedor del viaje de ' || v.placa || ' · ' || v.chofer || ': '
                   || coalesce(nullif(v.contenedor, ''), '(vacío)') || ' → ' || norm(a ->> 2));
     return jsonb_build_object('placa', v.placa, 'chofer', v.chofer, 'antes', coalesce(nullif(v.contenedor, ''), '(vacío)'));
+  when 'api_viajeEditar' then perform auth(a ->> 0); return f_viaje_editar(a ->> 1, coalesce(a -> 2, '{}'));
   when 'api_viajeAnular' then
     perform auth(a ->> 0);
     if length(trim(coalesce(a ->> 2, ''))) < 3 then perform e('Escribe el motivo de la anulación.'); end if;
