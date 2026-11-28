@@ -1720,6 +1720,7 @@ async function loadFac(){
     const r=await conTopeRun(TOPE_PESADA,'api_facturacion',S.pin);
     if(!r||!Array.isArray(r.rows)||!r.param)throw new Error('La respuesta del servidor llegó vacía.');
     S.fac={rows:r.rows,facturas:r.facturas||[],param:r.param,t:Date.now()};S.facErr='';
+    try{const q=await conTopeRun(TOPE_PESADA,'api_resumen',S.pin);S.res=q&&Array.isArray(q.sem)?{sem:q.sem,prov:q.prov||[]}:{sem:[],prov:[]};S.resErr=''}catch(e2){S.res=S.res||{sem:[],prov:[]};S.resErr=msg(e2)}
   }catch(e){
     if(/PIN/.test(msg(e))){S.facBusy=false;logout();toast('PIN incorrecto');return}
     S.facErr=msg(e);S.facFail=Date.now();
@@ -1749,6 +1750,50 @@ function resUso(m){
   const seg=[['Pagadas completas',m.comp,'#1d6fd6'],['Penalizadas',m.pen,'#f26b21'],['Mov. internos',m.int,'#16a6b6'],['Sin movimiento',m.sin,'#c3cddc']],tot=seg.reduce((a,x)=>a+x[1],0)||1;
   return`<div style="display:flex;gap:2px;height:22px;border-radius:6px;overflow:hidden" role="img" aria-label="Uso de las horas por unidad y día">${seg.map(x=>`<i title="${x[0]}: ${estF1(x[1])} h" style="flex:${x[1]/tot};background:${x[2]};min-width:${x[1]>0?3:0}px"></i>`).join('')}</div>
   <div style="display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;font-size:12.5px;color:var(--mute)">${seg.map(x=>`<span style="display:inline-flex;align-items:center;gap:6px"><i style="width:10px;height:10px;border-radius:3px;background:${x[2]}"></i>${x[0]} <b style="color:var(--ink,#16253f)">${estF1(x[1])} h</b></span>`).join('')}</div>`}
+function resTipo(C,RS,win){
+  const x=RS||{},int=C.mi,tot=(x.porteo||0)+(x.traslados||0)+int,tt=(x.diurno||0)+(x.nocturno||0);
+  const barra=(seg,t)=>{t=t||1;return`<div style="display:flex;gap:2px;height:22px;border-radius:6px;overflow:hidden">${seg.map(q=>`<i title="${q[0]}: ${estF(q[1])}" style="flex:${q[1]/t};background:${q[2]};min-width:${q[1]>0?3:0}px"></i>`).join('')}</div><div style="display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;font-size:12.5px;color:var(--mute)">${seg.map(q=>`<span style="display:inline-flex;align-items:center;gap:6px"><i style="width:10px;height:10px;border-radius:3px;background:${q[2]}"></i>${q[0]} <b style="color:var(--ink,#16253f)">${estF(q[1])}</b> · ${estP0(q[1]/t)}</span>`).join('')}</div>`};
+  if(!RS)return`<h2 class="sc-sec">Movimientos por tipo y por turno</h2><section class="card"><div class="empty">Aún no hay datos de tipo y turno para la semana ${C.semana}.</div></section>`;
+  return`<h2 class="sc-sec">Movimientos por tipo y por turno</h2><div class="res-2">
+  <section class="card"><h2>Por tipo</h2><div class="est-nota">Porteo + traslados + movimientos internos = ${estF(tot)}</div>${barra([['Porteo',x.porteo,'#1d6fd6'],['Traslados',x.traslados,'#f26b21'],['Internos',int,'#16a6b6']],tot)}</section>
+  <section class="card"><h2>Por turno</h2><div class="est-nota">Diurno + nocturno = ${estF(tt)}</div>${barra([['Diurno',x.diurno,'#f2b01e'],['Nocturno',x.nocturno,'#2b3f7a']],tt)}</section></div>`}
+function resProv(C,prov,sems){
+  const por=w=>{const f=prov.filter(p=>p.semana===w),t=f.reduce((a,p)=>a+p.mov,0);return{f,t}};
+  const cur=por(C.semana);if(!cur.t)return`<h2 class="sc-sec">Participación de TPG por proveedor</h2><section class="card"><div class="empty">Aún no hay movimientos por proveedor para la semana ${C.semana}.</div></section>`;
+  const prevW=sems.filter(w=>w<C.semana).pop(),pv=prevW?por(prevW):null,H='ATCOTRANS';
+  const sh=(w,nom)=>{const q=por(w);const f=q.f.find(p=>p.proveedor===nom);return q.t&&f?f.mov/q.t:0};
+  const lista=cur.f.slice().sort((a,b)=>b.mov-a.mov),tr=lista.map((p,k)=>{const pr=pv&&pv.f.find(q=>q.proveedor===p.proveedor),d=pr&&pr.mov?facArrow(resDv(p.mov,pr.mov)):'—',mine=p.proveedor===H;
+    return`<tr${mine?' style="background:#eaf2fd;font-weight:700"':''}><td style="text-align:left">${k+1}. ${esc(p.proveedor)}</td><td>${estF(p.mov)}</td><td>${estPf(p.mov/cur.t)}</td><td>${d}</td></tr>`}).join('');
+  const ws=sems.filter(w=>w<=C.semana).slice(-6),vals=ws.map(w=>sh(w,H)*100),av=sems.reduce((a,w)=>a+sh(w,H),0)/sems.length*100,rk=lista.findIndex(p=>p.proveedor===H)+1,mio=sh(C.semana,H);
+  return`<h2 class="sc-sec">Participación de TPG por proveedor</h2><div class="sc-grid">
+  ${estSc('Participación de '+H,estPf(mio),pv?resPp(mio,sh(prevW,H))+' · sem '+C.semana+' vs '+prevW:'',`Puesto ${rk||'—'} de ${lista.length} · promedio ${estNum(av,1)}%`,'',null,'target')}
+  ${estSc('Movimientos de '+H,estF((lista.find(p=>p.proveedor===H)||{mov:0}).mov),'',`Total de TPG: ${estF(cur.t)} movimientos`,'',null,'route')}</div>
+  <div class="res-2"><section class="card"><h2>Ranking de la semana ${C.semana}</h2><div class="scroll"><table class="est-t"><thead><tr><th>Proveedor</th><th>Mov.</th><th>Part.</th><th>vs ${prevW||'—'}</th></tr></thead><tbody>${tr}</tbody></table></div></section>
+  <section class="card"><h2>Evolución de ${H} (%)</h2><div class="est-nota">Barra azul = semana elegida · línea naranja = promedio</div>${resBars(vals,ws,ws.length-1,av,'Promedio '+estNum(av,1)+'%',v=>estNum(v,1)+'%')}</section></div>`}
+function resNov(C,RS,sw){
+  if(!RS)return`<h2 class="sc-sec">Novedades operativas</h2><section class="card"><div class="empty">Aún no hay novedades cargadas para la semana ${C.semana}.</div></section>`;
+  const M=[['Descarga','esp_descarga'],['Ingreso a muelle','esp_muelle'],['Carga','esp_carga'],['Cambio de movimiento','esp_cambio_mov'],['Cambio de guardia','esp_cambio_guardia']],tot=r=>M.reduce((a,m)=>a+Number(r[m[1]]||0),0),T=tot(RS),mx=Math.max(1,...M.map(m=>Number(RS[m[1]]||0)));
+  const ws=sw.filter(r=>r.semana<=C.semana).slice(-6),avg=sw.reduce((a,r)=>a+tot(r),0)/sw.length;
+  const bar=M.map(m=>{const v=Number(RS[m[1]]||0);return`<div style="display:flex;align-items:center;gap:10px;margin:7px 0;font-size:13px"><span style="width:140px;color:var(--mute)">${m[0]}</span><i style="height:14px;border-radius:4px;background:#1d6fd6;width:${Math.max(v?3:0,v/mx*100)}%;max-width:55%"></i><b>${estF1(v)} h</b></div>`}).join('');
+  const txt=[RS.incidencia,RS.mensaje].filter(Boolean).map(esc).join('<br>')||'Sin novedades registradas.';
+  return`<h2 class="sc-sec">Novedades operativas</h2><div class="sc-grid">
+  ${estSc('Incidencias de operaciones',estF(RS.inc_oper),'',`Semana ${C.semana}`,'',null,'alert')}
+  ${estSc('Daño estructural',estF(RS.inc_dano),'',`Semana ${C.semana}`,'',null,'alert')}
+  ${estSc('Horas de espera por demoras del terminal',estF1(T)+' h','',`Promedio de ${sw.length} semanas: ${estF1(avg)} h`,'',null,'timer')}</div>
+  <div class="res-2"><section class="card"><h2>Horas de espera por motivo</h2>${bar}</section>
+  <section class="card"><h2>Horas de espera por semana</h2><div class="est-nota">Barra azul = semana elegida · línea naranja = promedio</div>${resBars(ws.map(tot),ws.map(r=>r.semana),ws.length-1,avg,'Promedio '+estF1(avg),estF)}</section></div>
+  <section class="card"><h2>Incidencias de la semana</h2><p style="margin:0;font-size:14px;line-height:1.5">${txt}</p></section>`}
+function resForm(C,RS,prov){
+  if(S.rol!=='admin')return'';
+  const x=RS||{},ps=[...new Set(S.res.prov.map(p=>p.proveedor))],cur=Object.fromEntries(prov.filter(p=>p.semana===C.semana).map(p=>[p.proveedor,p.mov]));
+  const f=(k,t,v)=>`<label style="display:block;font-size:12px;color:var(--mute)">${t}<input data-rf="${k}" type="number" inputmode="decimal" step="any" min="0" value="${v==null?'':v}" style="width:100%;margin-top:3px"></label>`;
+  const c=[['porteo','Porteo'],['traslados','Traslados'],['diurno','Diurno'],['nocturno','Nocturno'],['inc_oper','Incid. operaciones'],['inc_dano','Daño estructural'],['esp_descarga','Espera descarga (h)'],['esp_muelle','Espera muelle (h)'],['esp_carga','Espera carga (h)'],['esp_cambio_mov','Cambio mov. (h)'],['esp_cambio_guardia','Cambio guardia (h)']];
+  return`<section class="card"><details><summary style="font-weight:700;cursor:pointer">Cargar o corregir datos de la semana ${C.semana}</summary>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:12px">${c.map(q=>f(q[0],q[1],x[q[0]])).join('')}</div>
+  <label style="display:block;font-size:12px;color:var(--mute);margin-top:10px">Incidencias de la semana<textarea data-rf="incidencia" rows="2" maxlength="400" style="width:100%;margin-top:3px">${esc(x.incidencia||'')}</textarea></label>
+  <h3 style="margin:14px 0 6px;font-size:14px">Movimientos por proveedor</h3>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px">${ps.map(n=>`<label style="display:block;font-size:12px;color:var(--mute)">${esc(n)}<input data-rp="${esc(n)}" type="number" inputmode="numeric" min="0" value="${cur[n]==null?'':cur[n]}" style="width:100%;margin-top:3px"></label>`).join('')}</div>
+  <button class="btn pri" data-act="rsave" style="margin-top:14px">Guardar semana ${C.semana}</button></details></section>`}
 function dibujarRes(){const falla=S.facFail&&Date.now()-S.facFail<90000;if((!S.fac||Date.now()-S.fac.t>300000)&&!falla)loadFac();else renderRes()}
 function renderRes(){dibujoSeguro_('#resBox',renderRes_,'el resumen','data-act="rreload"')}
 function renderRes_(){
@@ -1756,6 +1801,7 @@ function renderRes_(){
   if(!S.fac){box.innerHTML=S.facErr?`<div class="card"><div class="empty">No se pudo cargar el resumen.<br><span class="mono">${esc(S.facErr)}</span><br><button class="btn pri" data-act="rreload" style="margin-top:12px">Reintentar</button></div></div>`:cargaHtml('Cargando el resumen…');return}
   const P=S.fac.param,rows=S.fac.rows.slice().sort((a,b)=>a.semana-b.semana);
   if(!rows.length){box.innerHTML='<div class="card"><div class="empty">Aún no hay semanas cargadas en la hoja de facturación.</div></div>';return}
+  const RX=S.res||{sem:[],prov:[]};
   const ms=rows.map(r=>resM(r,P));let i=ms.findIndex(m=>m.semana===S.resSem);if(i<0)i=ms.length-1;
   const C=ms[i],V=i>0?ms[i-1]:null,win=ms.slice(Math.max(0,i-5),i+1),n=ms.length;
   const av=k=>ms.reduce((a,m)=>a+m[k],0)/n,mtx=P.horasDia*P.movHora;
@@ -1789,7 +1835,12 @@ function renderRes_(){
   <section class="card"><h2>Movimientos por semana</h2><div class="est-nota">Barra azul = semana elegida · línea naranja = promedio de las ${n} semanas</div>${resBars(win.map(m=>m.mov),win.map(m=>m.semana),win.length-1,av('mov'),'Promedio '+estF(av('mov')),estF)}</section></div>
   ${k2}
   <section class="card"><h2>Uso de las ${P.horasDia} horas por unidad y día</h2><div class="est-nota">Cada día de cada unidad se reparte entre horas pagadas, penalizadas, movimientos internos y horas sin movimiento.</div>${resUso(C)}</section>
-  ${tab}`;
+  ${resTipo(C,RX.sem.find(r=>r.semana===C.semana),win)}
+  ${resProv(C,RX.prov,[...new Set(RX.prov.map(p=>p.semana))].sort((a,b)=>a-b))}
+  ${resNov(C,RX.sem.find(r=>r.semana===C.semana),RX.sem)}
+  ${tab}
+  ${resForm(C,RX.sem.find(r=>r.semana===C.semana),RX.prov)}`;
+  const gb=box.querySelector('[data-act="rsave"]');if(gb)gb.addEventListener('click',async()=>{const o={semana:C.semana};box.querySelectorAll('[data-rf]').forEach(e=>{o[e.dataset.rf]=e.value});const fl=[...box.querySelectorAll('[data-rp]')].filter(e=>e.value!=='').map(e=>({proveedor:e.dataset.rp,mov:e.value}));gb.disabled=true;try{await run('api_resSemanaGuardar',S.pin,o);if(fl.length)await run('api_resProvGuardar',S.pin,{semana:C.semana,filas:fl});toast('Semana '+C.semana+' guardada');S.fac=null;S.facFail=0;loadFac()}catch(er){toast(msg(er));gb.disabled=false}});
   const sl=box.querySelector('[data-res="sem"]');if(sl)sl.addEventListener('change',e=>{S.resSem=Number(e.target.value);renderRes()});
   const rb=box.querySelector('[data-act="rreload"]');if(rb)rb.addEventListener('click',()=>{S.facErr='';S.facFail=0;loadFac()});
 }
