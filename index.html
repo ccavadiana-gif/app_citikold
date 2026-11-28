@@ -235,7 +235,8 @@ table{font-size:13px}td{padding:10px 9px}
 #opsProg .dr-h{position:sticky;top:0;z-index:2;display:flex;justify-content:space-between;align-items:center;padding:14px 0;background:var(--bg);font-size:16px}
 #opsProg .grid{grid-template-columns:minmax(0,1fr)}
 /* viajes en curso: unidad en parada */
-#tbActivos th:last-child,#tbActivos td:last-child{position:sticky;right:0;background:var(--card);box-shadow:-8px 0 8px -8px rgba(8,43,92,.18)}
+#tbActivos th:last-child,#tbActivos td:last-child{position:sticky;right:0;background:color-mix(in srgb,var(--card) 35%,transparent);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);box-shadow:-8px 0 8px -8px rgba(8,43,92,.14)}
+#tbActivos tbody tr:hover td:last-child{background:color-mix(in srgb,var(--acc) 8%,transparent)}
 .tmx{font-weight:800;font-size:14px}.tmx.r{color:var(--bad)}.tmx.a{color:var(--warn)}.tmx.o{color:var(--ok)}.obsm{color:var(--warn);font-weight:600}
 tbody tr.enpar td:last-child{background:#fff1f0}
 #tbActivos .acts{display:flex;flex-direction:column;gap:6px;align-items:stretch}
