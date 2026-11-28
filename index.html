@@ -1807,6 +1807,7 @@ function renderRes_(){
   const C=ms[i],V=i>0?ms[i-1]:null,win=ms.slice(Math.max(0,i-5),i+1),n=ms.length;
   const av=k=>ms.reduce((a,m)=>a+m[k],0)/n,mtx=P.horasDia*P.movHora;
   const tag=(c,p)=>V?facArrow(resDv(c,p))+' · sem '+C.semana+' vs '+V.semana:'';
+  const cmp=(c,p,fm)=>V?`Sem ${V.semana}: ${fm(p)} (${facArrow(resDv(c,p))}) · `:'';
   const vp=(c,a,fm)=>'vs promedio '+facArrow(resDv(c,a))+' ('+fm(a)+')';
   const sel=`<select data-res="sem" aria-label="Semana a presentar">${ms.slice().reverse().map(m=>`<option value="${m.semana}"${m.semana===C.semana?' selected':''}>Semana ${m.semana}</option>`).join('')}</select>`;
   const k1=`<h2 class="sc-sec">Resumen ejecutivo</h2><div class="sc-grid">
@@ -1816,10 +1817,10 @@ function renderRes_(){
     ${estSc('Tiempo por movimiento',estF1(C.tpm)+' min',V?facArrow(resDv(C.tpm,V.tpm))+' · sem '+C.semana+' vs '+V.semana:'',`(${estF(C.pos)} h × 60) ÷ ${estF(C.mov)} movimientos · ${vp(C.tpm,av('tpm'),estF1)}`,'',null,'timer')}
   </div>`;
   const k2=`<h2 class="sc-sec">Facturación y uso de las horas</h2><div class="sc-grid">
-    ${estSc('Fuga vs esperado',facM(C.fuga),'',`Facturado por horas menos esperado${V?' · sem '+V.semana+': '+facM(V.fuga):''}`,'',null,'down')}
-    ${estSc('$ por hora · todas las horas','$ '+estNum(C.vh,2),estPf(C.vh/P.tarifa)+' de la tarifa',`Facturado ÷ horas posibles (${estF(C.pos)} h) · tarifa ${facM(P.tarifa)}`,'',C.vh/P.tarifa,'gauge')}
-    ${estSc('$ por hora · con movimiento','$ '+estNum(C.vhc,2),estPf(C.vhc/P.tarifa)+' de la tarifa',`Facturado ÷ horas con movimiento (${estF(C.conh*C.unidades*C.dias)} h)`,'',C.vhc/P.tarifa,'gauge')}
-    ${estSc('Horas con movimiento por unidad y día',estF1(C.conh)+' h',estP0(C.conh/P.horasDia)+' del día',`De ${P.horasDia} h · pagadas completas + penalizadas + internos`,'',C.conh/P.horasDia,'timer')}
+    ${estSc('Fuga vs esperado',facM(C.fuga),V?facArrow(resDv(C.fuga,V.fuga))+' · sem '+C.semana+' vs '+V.semana:'',`Facturado por horas menos esperado${V?' · sem '+V.semana+': '+facM(V.fuga):''}`,'',null,'down')}
+    ${estSc('$ por hora · todas las horas','$ '+estNum(C.vh,2),estPf(C.vh/P.tarifa)+' de la tarifa',`${cmp(C.vh,V&&V.vh,v=>'$ '+estNum(v,2))}Facturado ÷ horas posibles (${estF(C.pos)} h) · tarifa ${facM(P.tarifa)}`,'',C.vh/P.tarifa,'gauge')}
+    ${estSc('$ por hora · con movimiento','$ '+estNum(C.vhc,2),estPf(C.vhc/P.tarifa)+' de la tarifa',`${cmp(C.vhc,V&&V.vhc,v=>'$ '+estNum(v,2))}Facturado ÷ horas con movimiento (${estF(C.conh*C.unidades*C.dias)} h)`,'',C.vhc/P.tarifa,'gauge')}
+    ${estSc('Horas con movimiento por unidad y día',estF1(C.conh)+' h',estP0(C.conh/P.horasDia)+' del día',`${cmp(C.conh,V&&V.conh,v=>estF1(v)+' h')}De ${P.horasDia} h · pagadas completas + penalizadas + internos`,'',C.conh/P.horasDia,'timer')}
   </div>`;
   const dif=(c,a,k)=>k==='pct'?resPp(c,a):facArrow(resDv(c,a));
   const fila=(t,k,fm,pp)=>{const a=av(k);return`<tr><td style="text-align:left">${t}</td><td>${fm(C[k])}</td><td>${fm(a)}</td><td>${pp?resPp(C[k],a):facArrow(resDv(C[k],a))}</td></tr>`};
