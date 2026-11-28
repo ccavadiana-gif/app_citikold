@@ -236,6 +236,7 @@ table{font-size:13px}td{padding:10px 9px}
 #opsProg .grid{grid-template-columns:minmax(0,1fr)}
 /* viajes en curso: unidad en parada */
 #tbActivos th:last-child,#tbActivos td:last-child{position:sticky;right:0;background:var(--card);box-shadow:-8px 0 8px -8px rgba(8,43,92,.18)}
+.tmx{font-weight:800;font-size:14px}.tmx.r{color:var(--bad)}.tmx.a{color:var(--warn)}.tmx.o{color:var(--ok)}.obsm{color:var(--warn);font-weight:600}
 tbody tr.enpar td:last-child{background:#fff1f0}
 #tbActivos .acts{display:flex;flex-direction:column;gap:6px;align-items:stretch}
 #tbActivos .acts .btn{white-space:nowrap}
@@ -2125,7 +2126,7 @@ function renderOps(){
   const FF=S.fFecha||'';fechasOpts();
   const act=activos().filter(v=>(!S.fProy||v.proyecto===S.fProy)&&(!tsl||v.turno===tsl)&&(!FF||diaOp(v.creado,v.turno)===FF)).sort((a,b)=>(pab[b.placa]?1:0)-(pab[a.placa]?1:0)),box=$('#tbActivos');
   $('#tActTit').textContent=tsl?'Viajes en curso · turno '+tsl.toLowerCase():'Viajes en curso';
-  const cur=turnoNow(),todos=activos();
+  const cur=turnoNow(),todos=activos(),multiPj=!S.fProy&&new Set(todos.map(v=>v.proyecto)).size>1;
   const prg=(S.A.prog||[]).filter(x=>x.estado==='programado'&&(FF?x.fecha===FF:x.fecha<=cur.fecha)&&(!S.fProy||x.proyecto===S.fProy)&&(!tsl||x.turno===tsl)).sort((a,b)=>byText('turno')(a,b)||byText('placa')(a,b));
   if(!act.length&&!prg.length){
     const otros=(S.A.prog||[]).filter(x=>x.estado==='programado'&&(FF?x.fecha===FF:true)&&x.turno!==tsl).length,fl=FF?' del '+FF.split('-').reverse().join('/'):'';
@@ -2135,9 +2136,9 @@ function renderOps(){
     return`<tr data-rid="${esc(x.id)}" class="prg ${S.rowOpen&&S.rowOpen[x.id]?'open':''}"><td><b>${esc(x.chofer)}</b>${av}</td><td><b>${esc(x.placa)}</b><div style="margin-top:3px">${pj(x.proyecto)}</div><div class="mute" style="font-size:12px">${esc(x.turno)}</div></td><td><div class="mute" style="font-size:12px">${esc(x.operacion)||'—'}</div><div class="mute" style="font-size:12px">${x.auto?'Viajes automáticos':''}</div></td><td><span class="b prgb">PROGRAMADO</span><div class="mute" style="font-size:12px;margin-top:4px">${esc(x.turno.toLowerCase())} del ${esc(x.fecha.split('-').reverse().join('/'))} · aún no le llega al chofer</div></td><td><div class="acts"><button class="btn pri sm playb" data-passign="${esc(x.id)}" title="Enviar al chofer">▶ Enviar</button><button class="btn sm danger" data-pdel="${esc(x.id)}">Quitar</button></div></td></tr>`};
   box.innerHTML=`<table><thead><tr><th>Chofer</th><th>Placa</th><th>Ruta y contenedor</th><th>Estado</th><th></th></tr></thead><tbody>`+prg.map(filaPrg).join('')+
   act.map(v=>{const p=v.paso||0,since=(p?v['t'+p]:0)||v.creado,canAuto=B.autoProyectos.includes(v.proyecto),pa=pab[v.placa];
-    return`<tr data-rid="${esc(v.id)}" class="${pa?'enpar ':''}${S.rowOpen&&S.rowOpen[v.id]?'open':''}"><td><b>${esc(v.chofer)}</b></td><td><b>${esc(v.placa)}</b><div style="margin-top:3px">${pj(v.proyecto)}</div><div class="mute" style="font-size:12px">${esc(v.turno)||'—'}</div></td>
-    <td>${rutaTxt(v)}<div class="mute" style="font-size:12px">${esc(v.operacion)}${v.viaje_no>1?' · viaje #'+v.viaje_no:''}</div><div class="mono" style="font-size:12px;margin-top:2px">${v.contenedor?esc(v.contenedor)+' · '+esc(v.medida):'<span class="mute">Sin contenedor</span>'}</div>${v.observaciones?`<div class="mute" style="font-size:12px">${esc(v.observaciones)}</div>`:''}</td>
-    <td>${pa?`<span class="b off pbad">EN PARADA</span><div class="pmot">${esc(pa.motivo)}</div><div class="mono" style="font-size:12px">desde ${hora(pa.inicio)} · <span class="pcrono" data-since="${pa.inicio}">${fdur(Date.now()-pa.inicio)}</span></div>`:`<span class="b ${['bl','bl','bl','free','busy','busy'][p]||'busy'}">${ESTADOS[p]}</span><div class="mono" style="font-size:12px;margin-top:3px">desde ${hora(since)} · <span data-since="${since}">${fdur(Date.now()-since)}</span></div>`}<div class="seg" style="margin-top:6px">${[1,2,3,4,5,6].map(i=>`<i class="${i<=p?'f':''}"></i>`).join('')}</div></td>
+    return`<tr data-rid="${esc(v.id)}" class="${pa?'enpar ':''}${S.rowOpen&&S.rowOpen[v.id]?'open':''}"><td><b>${esc(v.chofer)}</b><div class="mute" style="font-size:12px;margin-top:3px">Viaje #${v.viaje_no||1}</div></td><td><b>${esc(v.placa)}</b>${multiPj?`<div style="margin-top:3px">${pj(v.proyecto)}</div>`:''}</td>
+    <td>${rutaTxt(v)}${v.operacion&&v.operacion!==v.proyecto?`<div class="mute" style="font-size:12px">${esc(v.operacion)}</div>`:''}<div class="mono" style="font-size:12px;margin-top:2px">${v.contenedor?esc(v.contenedor)+' · '+esc(v.medida):'<span class="mute">Sin contenedor</span>'}${v.observaciones?` · <span class="obsm">${esc(v.observaciones)}</span>`:''}</div></td>
+    <td>${pa?`<span class="b off pbad">EN PARADA</span><div class="pmot">${esc(pa.motivo)}</div><div class="mono" style="font-size:12px">desde ${hora(pa.inicio)} · <span class="pcrono" data-since="${pa.inicio}">${fdur(Date.now()-pa.inicio)}</span></div>`:`<span class="b ${['bl','bl','bl','free','busy','busy'][p]||'busy'}">${ESTADOS[p]}</span><div class="mono" style="font-size:12px;margin-top:3px"><span class="tmx ${((Date.now()-since)/60000)>=60?'r':((Date.now()-since)/60000)>=30?'a':'o'}" data-since="${since}">${fdur(Date.now()-since)}</span> <span class="mute">desde ${hora(since)}</span></div>`}<div class="seg" style="margin-top:6px">${[1,2,3,4,5,6].map(i=>`<i class="${i<=p?'f':''}"></i>`).join('')}</div></td>
     <td><div class="acts">${canAuto?`<button class="btn sm" data-auto="${esc(v.id)}" title="Viajes seguidos">Auto: ${v.auto?'Sí ✔':'No'}</button>`:''}${p===0?`<button class="btn sm" data-cplaca="${esc(v.id)}">Cambiar placa</button>`:''}<button class="btn sm danger" data-liberar="${esc(v.id)}">Liberar</button></div></td></tr>`}).join('')+`</tbody></table>`;
 }
 /* Cambio de placa (despacho): la parada del chofer sigue corriendo */
