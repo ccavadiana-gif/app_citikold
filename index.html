@@ -1753,13 +1753,13 @@ function resUso(m){
 function resTipo(C,RS,win){
   const x=RS||{},int=C.mi,tot=(x.porteo||0)+(x.traslados||0)+int,tt=(x.diurno||0)+(x.nocturno||0);
   const barra=(seg,t)=>{t=t||1;return`<div style="display:flex;gap:2px;height:22px;border-radius:6px;overflow:hidden">${seg.map(q=>`<i title="${q[0]}: ${estF(q[1])}" style="flex:${q[1]/t};background:${q[2]};min-width:${q[1]>0?3:0}px"></i>`).join('')}</div><div style="display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;font-size:12.5px;color:var(--mute)">${seg.map(q=>`<span style="display:inline-flex;align-items:center;gap:6px"><i style="width:10px;height:10px;border-radius:3px;background:${q[2]}"></i>${q[0]} <b style="color:var(--ink,#16253f)">${estF(q[1])}</b> · ${estP0(q[1]/t)}</span>`).join('')}</div>`};
-  if(!RS)return`<h2 class="sc-sec">Movimientos por tipo y por turno</h2><section class="card"><div class="empty">Aún no hay datos de tipo y turno para la semana ${C.semana}.</div></section>`;
+  if(!RS)return`<h2 class="sc-sec">Movimientos por tipo y por turno</h2><section class="card"><div class="empty">Aún no hay datos de tipo y turno para la semana ${C.semana}.${S.rol==='admin'?' Cárgalos con «Cargar datos», arriba.':''}</div></section>`;
   return`<h2 class="sc-sec">Movimientos por tipo y por turno</h2><div class="res-2">
   <section class="card"><h2>Por tipo</h2><div class="est-nota">Porteo + traslados + movimientos internos = ${estF(tot)}</div>${barra([['Porteo',x.porteo,'#1d6fd6'],['Traslados',x.traslados,'#f26b21'],['Internos',int,'#16a6b6']],tot)}</section>
   <section class="card"><h2>Por turno</h2><div class="est-nota">Diurno + nocturno = ${estF(tt)}</div>${barra([['Diurno',x.diurno,'#f2b01e'],['Nocturno',x.nocturno,'#2b3f7a']],tt)}</section></div>`}
 function resProv(C,prov,sems){
   const por=w=>{const f=prov.filter(p=>p.semana===w),t=f.reduce((a,p)=>a+p.mov,0);return{f,t}};
-  const cur=por(C.semana);if(!cur.t)return`<h2 class="sc-sec">Participación de TPG por proveedor</h2><section class="card"><div class="empty">Aún no hay movimientos por proveedor para la semana ${C.semana}.</div></section>`;
+  const cur=por(C.semana);if(!cur.t)return`<h2 class="sc-sec">Participación de TPG por proveedor</h2><section class="card"><div class="empty">Aún no hay movimientos por proveedor para la semana ${C.semana}.${S.rol==='admin'?' Cárgalos con «Cargar datos», arriba.':''}</div></section>`;
   const prevW=sems.filter(w=>w<C.semana).pop(),pv=prevW?por(prevW):null,H='ATCOTRANS';
   const sh=(w,nom)=>{const q=por(w);const f=q.f.find(p=>p.proveedor===nom);return q.t&&f?f.mov/q.t:0};
   const lista=cur.f.slice().sort((a,b)=>b.mov-a.mov),tr=lista.map((p,k)=>{const pr=pv&&pv.f.find(q=>q.proveedor===p.proveedor),d=pr&&pr.mov?facArrow(resDv(p.mov,pr.mov)):'—',mine=p.proveedor===H;
@@ -1771,7 +1771,7 @@ function resProv(C,prov,sems){
   <div class="res-2"><section class="card"><h2>Ranking de la semana ${C.semana}</h2><div class="scroll"><table class="est-t"><thead><tr><th>Proveedor</th><th>Mov.</th><th>Part.</th><th>vs ${prevW||'—'}</th></tr></thead><tbody>${tr}</tbody></table></div></section>
   <section class="card"><h2>Evolución de ${H} (%)</h2><div class="est-nota">Barra azul = semana elegida · línea naranja = promedio</div>${resBars(vals,ws,ws.length-1,av,'Promedio '+estNum(av,1)+'%',v=>estNum(v,1)+'%')}</section></div>`}
 function resNov(C,RS,sw){
-  if(!RS)return`<h2 class="sc-sec">Novedades operativas</h2><section class="card"><div class="empty">Aún no hay novedades cargadas para la semana ${C.semana}.</div></section>`;
+  if(!RS)return`<h2 class="sc-sec">Novedades operativas</h2><section class="card"><div class="empty">Aún no hay novedades cargadas para la semana ${C.semana}.${S.rol==='admin'?' Cárgalos con «Cargar datos», arriba.':''}</div></section>`;
   const M=[['Descarga','esp_descarga'],['Ingreso a muelle','esp_muelle'],['Carga','esp_carga'],['Cambio de movimiento','esp_cambio_mov'],['Cambio de guardia','esp_cambio_guardia']],tot=r=>M.reduce((a,m)=>a+Number(r[m[1]]||0),0),T=tot(RS),mx=Math.max(1,...M.map(m=>Number(RS[m[1]]||0)));
   const ws=sw.filter(r=>r.semana<=C.semana).slice(-6),avg=sw.reduce((a,r)=>a+tot(r),0)/sw.length;
   const bar=M.map(m=>{const v=Number(RS[m[1]]||0);return`<div style="display:flex;align-items:center;gap:10px;margin:7px 0;font-size:13px"><span style="width:140px;color:var(--mute)">${m[0]}</span><i style="height:14px;border-radius:4px;background:#1d6fd6;width:${Math.max(v?3:0,v/mx*100)}%;max-width:55%"></i><b>${estF1(v)} h</b></div>`}).join('');
@@ -1788,7 +1788,7 @@ function resForm(C,RS,prov){
   const x=RS||{},ps=[...new Set(S.res.prov.map(p=>p.proveedor))],cur=Object.fromEntries(prov.filter(p=>p.semana===C.semana).map(p=>[p.proveedor,p.mov]));
   const f=(k,t,v)=>`<label style="display:block;font-size:12px;color:var(--mute)">${t}<input data-rf="${k}" type="number" inputmode="decimal" step="any" min="0" value="${v==null?'':v}" style="width:100%;margin-top:3px"></label>`;
   const c=[['porteo','Porteo'],['traslados','Traslados'],['diurno','Diurno'],['nocturno','Nocturno'],['inc_oper','Incid. operaciones'],['inc_dano','Daño estructural'],['esp_descarga','Espera descarga (h)'],['esp_muelle','Espera muelle (h)'],['esp_carga','Espera carga (h)'],['esp_cambio_mov','Cambio mov. (h)'],['esp_cambio_guardia','Cambio guardia (h)']];
-  return`<section class="card"><details><summary style="font-weight:700;cursor:pointer">Cargar o corregir datos de la semana ${C.semana}</summary>
+  return`<section class="card" id="resForm"><details${RS&&prov.some(p=>p.semana===C.semana)?'':' open'}><summary style="font-weight:700;cursor:pointer">Cargar o corregir datos de la semana ${C.semana}: tipo, turno, proveedores y novedades</summary>
   <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:12px">${c.map(q=>f(q[0],q[1],x[q[0]])).join('')}</div>
   <label style="display:block;font-size:12px;color:var(--mute);margin-top:10px">Incidencias de la semana<textarea data-rf="incidencia" rows="2" maxlength="400" style="width:100%;margin-top:3px">${esc(x.incidencia||'')}</textarea></label>
   <h3 style="margin:14px 0 6px;font-size:14px">Movimientos por proveedor</h3>
@@ -1828,7 +1828,7 @@ function renderRes_(){
   const lect=`Semana ${C.semana}: se facturaron ${facM(C.tot)}, el ${estP0(C.pct)} de lo esperado (${facM(C.esp)}). `+(V?`Los movimientos pasaron de ${estF(V.mov)} en la semana ${V.semana} a ${estF(C.mov)} (${facArrow(resDv(C.mov,V.mov))}), con ${estF1(C.mud)} por unidad y día frente a la meta de ${mtx}. `:`Los movimientos fueron ${estF(C.mov)}, con ${estF1(C.mud)} por unidad y día frente a la meta de ${mtx}. `)+`Cada hora disponible dejó ${facM(C.vh)} y cada hora con movimiento ${facM(C.vhc)} (tarifa ${facM(P.tarifa)}).`;
   box.innerHTML=`<div class="card est-head hb"><div class="row" style="justify-content:space-between;align-items:center;gap:12px">
     <div><h2 style="margin:0">Resumen</h2><div class="est-nota" style="margin:3px 0 0">${C.unidades} unidades · ${C.dias} días operados · tendencia de las últimas ${win.length} semanas${S.facBusy?' · actualizando…':''}</div></div>
-    <div class="row" style="gap:8px;flex-wrap:nowrap">${sel}<button class="btn sm" data-act="rreload"${S.facBusy?' disabled':''}>Actualizar</button></div></div></div>
+    <div class="row" style="gap:8px;flex-wrap:nowrap">${sel}${S.rol==='admin'?'<button class="btn sm pri" data-act="rform">Cargar datos</button>':''}<button class="btn sm" data-act="rreload"${S.facBusy?' disabled':''}>Actualizar</button></div></div></div>
   <p class="est-lect">${lect}</p>
   ${k1}
   <div class="res-2"><section class="card"><h2>Facturado por semana</h2><div class="est-nota">Barra azul = semana elegida · línea naranja = esperado de la semana</div>${resBars(win.map(m=>m.tot),win.map(m=>m.semana),win.length-1,C.esp,'Esperado '+facM(C.esp),v=>'$'+estF(v))}</section>
@@ -1843,6 +1843,7 @@ function renderRes_(){
   const gb=box.querySelector('[data-act="rsave"]');if(gb)gb.addEventListener('click',async()=>{const o={semana:C.semana};box.querySelectorAll('[data-rf]').forEach(e=>{o[e.dataset.rf]=e.value});const fl=[...box.querySelectorAll('[data-rp]')].filter(e=>e.value!=='').map(e=>({proveedor:e.dataset.rp,mov:e.value}));gb.disabled=true;try{await run('api_resSemanaGuardar',S.pin,o);if(fl.length)await run('api_resProvGuardar',S.pin,{semana:C.semana,filas:fl});toast('Semana '+C.semana+' guardada');S.fac=null;S.facFail=0;loadFac()}catch(er){toast(msg(er));gb.disabled=false}});
   const sl=box.querySelector('[data-res="sem"]');if(sl)sl.addEventListener('change',e=>{S.resSem=Number(e.target.value);renderRes()});
   const rb=box.querySelector('[data-act="rreload"]');if(rb)rb.addEventListener('click',()=>{S.facErr='';S.facFail=0;loadFac()});
+  const fb=box.querySelector('[data-act="rform"]');if(fb)fb.addEventListener('click',()=>{const f=box.querySelector('#resForm');if(f){f.querySelector('details').open=true;f.scrollIntoView({behavior:'smooth',block:'start'})}});
 }
 
 function renderFac(){dibujoSeguro_('#facBox',renderFac_,'la facturación','data-act="freload"')}
